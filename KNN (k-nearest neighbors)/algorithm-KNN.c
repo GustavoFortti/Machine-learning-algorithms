@@ -2,10 +2,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "knn.h"
 
 #define T_size 150
 
-typedef struct node
+/*
+    No principal, caracteristicas das plantas que serao analisadas pelo algoritimo, 
+    tambem foi adcionado uma variavel index para guardar numeros de 0 a 2 onde:
+    0 = Iris-setosa
+    1 = Iris-versicolor
+    2 = Iris-virginica
+
+    As 4 variaveis double de x a z indicam que o plano esta na 4 dimenção, porem
+    o calculo de distancia euclidiana se mantem o mesmo.
+*/
+
+struct node
 {
     double x;
     double y;
@@ -13,12 +25,19 @@ typedef struct node
     double z;
     char classe;
     int index;
-}Node;
+};
 
-typedef struct element{
+    /*
+        struct element: estrutura criada com a intenção de facilitar a ordenação do
+        vetor de classes das plantas.
+        Foi escolhido o metodo de ordenção para caso o numero de vizinhos aumentasse,
+        ai nao haveria uma grande modificação no algoritimo.
+    */
+
+struct element{
     int index;
     double dist;
-}Element;
+};
 
 int main(int argc, char const *argv[])
 {
@@ -29,6 +48,10 @@ int main(int argc, char const *argv[])
     char classe;
     int i;
     Node No_main[trein_size];
+
+    /*
+        entada de dados para treinamento, serao treinados com 105 classes diferentes de plantas.
+    */
 
     for ( i = 0; i < trein_size; i++)
     {
@@ -51,6 +74,12 @@ int main(int argc, char const *argv[])
 
 char classificationClass(Node No_main[], Node No_sub, int k, int trein_size)
 {
+
+    /*
+        Neste algoritimo foi evitado usar o numero de vizinho par, utilizando 
+        numeros impares para nao haver impate.
+    */
+
     if ( k % 2 == 0)
     {
         k--;
@@ -71,7 +100,16 @@ char classificationClass(Node No_main[], Node No_sub, int k, int trein_size)
         el[i].index = No_main[i].index;
     }
 
-    InserctionSort(el, trein_size);
+    /*
+        Função QuickSort modificada, implementada com a intenção de maximizar o tempo de trocas
+        Vantage: ao implementala o tempo seria consequencia de uma massa de dados de 150 
+        ( total de dados), 105 ( dados de treinamento) e 45 ( dados de teste), ao multiplicalos
+        seriam 4725 e ainda sim o Inserction sorte daria conta porem nao so sera trocado o elemento 
+        principal da função com seu index tambem, ou seja o dobro de elementos...
+    */
+
+    QuickSort(el, 0, trein_size);
+    //InserctionSort(el, trein_size);
     
     int cont_setosa = 0;
     int cont_versicolor = 0;
@@ -96,18 +134,58 @@ double EuclideanDistance( Node main[], Node sub, int i)
     return sqrt(dist);
 }
 
-void InserctionSort( Element v[], int size){
-	long escolhido = 0, j, i;
-    for ( i = 1; i < size; i++){
-        escolhido = v[i].dist;
-        escolhido = v[i].index;
-        j = i - 1;
-        while ((j >= 0) && ( v[j].dist > escolhido)){
-            v[j + 1].dist = v[j].dist;
-            v[j + 1].index = v[j].index;
-            j--;
-        }
-        v[j + 1].dist = escolhido;
-        v[j + 1].index = escolhido;
+void QuickSort(Element v[], int began, int end)
+{
+    long i, j, pivo, aux;
+
+    i = began;
+    j = end - 1;
+    pivo = v[(began + end) / 2].dist;
+
+    for (;i <= j;){
+	    for (;v[i].dist < pivo && i < end; ){
+	        i++;
+	    }
+	    for (;v[j].dist > pivo && j > began; ){
+	        j--;
+	    }
+	    if (i <= j){
+	        swap( v, i ,j);
+	        i++;
+	        j--;
+	    }
+    }
+    if (j > began){
+        QuickSort(v, began, j + 1);
+    }
+    if (i < end){
+        QuickSort(v, i, end);
     }
 }
+
+void swap( Element v[], int i, int j)
+{
+    double aux_v = v[i].dist;
+    v[i].dist = v[j].dist;
+    v[j].dist = aux_v;
+
+    int aux_index = v[i].index;
+    v[i].index = v[j].index;
+    v[j].index = aux_index;
+}
+
+// void InserctionSort( Element v[], int size){
+// 	long escolhido = 0, j, i;
+//     for ( i = 1; i < size; i++){
+//         escolhido = v[i].dist;
+//         escolhido = v[i].index;
+//         j = i - 1;
+//         while ((j >= 0) && ( v[j].dist > escolhido)){
+//             v[j + 1].dist = v[j].dist;
+//             v[j + 1].index = v[j].index;
+//             j--;
+//         }
+//         v[j + 1].dist = escolhido;
+//         v[j + 1].index = escolhido;
+//     }
+// }
