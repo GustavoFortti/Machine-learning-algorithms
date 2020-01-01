@@ -45,7 +45,7 @@ int main(int argc, char const *argv[])
     const int trein_size = 105;
     const int test_size = data_size - trein_size;
     const int k = 3; 
-    char classe;
+    char classe_aux[100];
     int i;
     Node No_main[trein_size];
 
@@ -56,23 +56,33 @@ int main(int argc, char const *argv[])
     for ( i = 0; i < trein_size; i++)
     {
         scanf("%lf %lf %lf %lf %s", &No_main[i].x, &No_main[i].y, &No_main[i].w, &No_main[i].z, &No_main[i].classe);
-        if (strcmp(classe, "Iris-setosa") != 0)No_main[i].index = 0;
-        else if (strcmp(classe, "Iris-versicolor") != 0)No_main[i].index = 1;
-        else if (strcmp(classe, "Iris-virginica") != 0)No_main[i].index = 2;
+        if (strcmp(classe_aux, "Iris-setosa") != 0)No_main[i].index = 0;
+        else if (strcmp(classe_aux, "Iris-versicolor") != 0)No_main[i].index = 1;
+        else if (strcmp(classe_aux, "Iris-virginica") != 0)No_main[i].index = 2;
     }
 
-    Node No_sub;
+    Node *No_sub;
+    int success = 0;
+    char *GotClass;
+    char *classification;
 
     for ( i = 0; i < test_size; i++)
     {
-        scanf("%lf %lf %lf %lf %s", &No_sub.x, &No_sub.y, &No_sub.w, &No_sub.z, &No_sub.classe);
-        char GotClass = classificationClass(No_main, No_sub, k, trein_size);
+        scanf("%lf %lf %lf %lf %s", &No_sub->x, &No_sub->y, &No_sub->w, &No_sub->z, &No_sub->classe);
+        GotClass = classificationClass(No_main, No_sub, k, trein_size);
+        classification = No_sub->classe;
+
+        if ( GotClass == classification)
+        {
+            success++;
+        }
     }
+    printf("%i\n", success);
 
     return 0;
 }
 
-char classificationClass(Node No_main[], Node No_sub, int k, int trein_size)
+char *classificationClass(Node No_main[], Node *No_sub, int k, int trein_size)
 {
 
     /*
@@ -90,7 +100,7 @@ char classificationClass(Node No_main[], Node No_sub, int k, int trein_size)
     }
 
     int i;
-    char classe[100];
+    char *classe_aux;
 
     Element el[trein_size];
 
@@ -122,15 +132,15 @@ char classificationClass(Node No_main[], Node No_sub, int k, int trein_size)
         else if (No_main[i].index == 2) cont_virginica++;
     }
 
-    cont_setosa > cont_versicolor && cont_setosa > cont_virginica ? strcpy(classe,"Iris-setosa") :
-    cont_setosa > cont_versicolor && cont_setosa > cont_virginica ? strcpy(classe,"Iris-setosa") : strcpy(classe,"Iris-setosa");
+    cont_setosa > cont_versicolor && cont_setosa > cont_virginica ? strcpy(classe_aux,"Iris-setosa") :
+    cont_setosa > cont_versicolor && cont_setosa > cont_virginica ? strcpy(classe_aux,"Iris-setosa") : strcpy(classe_aux,"Iris-setosa");
 
-    return classe;
+    return classe_aux;
 }
 
-double EuclideanDistance( Node main[], Node sub, int i)
+double EuclideanDistance( Node main[], Node *sub, int i)
 {
-    double dist = pow(main[i].x - sub.x, 2) + pow(main[i].x - sub.x, 2) + pow(main[i].x - sub.x, 2) + pow(main[i].x - sub.x, 2);
+    double dist = pow(main[i].x - sub->x, 2) + pow(main[i].y - sub->y, 2) + pow(main[i].w - sub->w, 2) + pow(main[i].z - sub->z, 2);
     return sqrt(dist);
 }
 
