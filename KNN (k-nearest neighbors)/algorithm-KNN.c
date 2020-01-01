@@ -60,17 +60,19 @@ int main(int argc, char const *argv[])
         else if (strcmp(classe_aux, "Iris-versicolor") != 0)No_main[i].index = 1;
         else if (strcmp(classe_aux, "Iris-virginica") != 0)No_main[i].index = 2;
     }
-
+    printf("aqui\n");
     Node *No_sub;
+    //*No_sub = (Node) malloc( test_size * sizeof())
     int success = 0;
     char *GotClass;
     char *classification;
 
     for ( i = 0; i < test_size; i++)
     {
-        scanf("%lf %lf %lf %lf %s", &No_sub->x, &No_sub->y, &No_sub->w, &No_sub->z, &No_sub->classe);
+        scanf("%lf %lf %lf %lf %s", &No_sub->x, &No_sub->y, &No_sub->w, &No_sub->z, No_sub->classe);
+        printf("aqui\n");
         GotClass = classificationClass(No_main, No_sub, k, trein_size);
-        classification = No_sub->classe;
+        classification = &No_sub->classe;
 
         if ( GotClass == classification)
         {
