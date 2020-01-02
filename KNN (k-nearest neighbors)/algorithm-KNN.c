@@ -6,33 +6,15 @@
 
 #define T_size 150
 
-/*
-    No principal, caracteristicas das plantas que serao analisadas pelo algoritimo, 
-    tambem foi adcionado uma variavel index para guardar numeros de 0 a 2 onde:
-    0 = Iris-setosa
-    1 = Iris-versicolor
-    2 = Iris-virginica
-
-    As 4 variaveis double de x a z indicam que o plano esta na 4 dimenção, porem
-    o calculo de distancia euclidiana se mantem o mesmo.
-*/
-
 struct node
 {
     double x;
     double y;
     double w;
     double z;
-    char classe;
+    char classe[100];
     int index;
 };
-
-    /*
-        struct element: estrutura criada com a intenção de facilitar a ordenação do
-        vetor de classes das plantas.
-        Foi escolhido o metodo de ordenção para caso o numero de vizinhos aumentasse,
-        ai nao haveria uma grande modificação no algoritimo.
-    */
 
 struct element{
     int index;
@@ -45,24 +27,20 @@ int main(int argc, char const *argv[])
     const int trein_size = 105;
     const int test_size = data_size - trein_size;
     const int k = 3; 
-    char classe_aux[100];
+    //char classe_aux[100];
     int i;
     Node No_main[trein_size];
 
-    /*
-        entada de dados para treinamento, serao treinados com 105 classes diferentes de plantas.
-    */
 
     for ( i = 0; i < trein_size; i++)
     {
-        scanf("%lf %lf %lf %lf %s", &No_main[i].x, &No_main[i].y, &No_main[i].w, &No_main[i].z, &No_main[i].classe);
-        if (strcmp(classe_aux, "Iris-setosa") != 0)No_main[i].index = 0;
-        else if (strcmp(classe_aux, "Iris-versicolor") != 0)No_main[i].index = 1;
-        else if (strcmp(classe_aux, "Iris-virginica") != 0)No_main[i].index = 2;
+        scanf("%lf %lf %lf %lf %s", &No_main[i].x, &No_main[i].y, &No_main[i].w, &No_main[i].z, No_main[i].classe);
+        if (strcmp(No_main[i].classe, "Iris-setosa") == 0)No_main[i].index = 0;
+        else if (strcmp(No_main[i].classe, "Iris-versicolor") == 0)No_main[i].index = 1;
+        else if (strcmp(No_main[i].classe, "Iris-virginica") == 0)No_main[i].index = 2;
     }
-    printf("aqui\n");
-    Node *No_sub;
-    //*No_sub = (Node) malloc( test_size * sizeof())
+    Node *No_sub, No_aux;
+    No_sub = &No_aux;
     int success = 0;
     char *GotClass;
     char *classification;
@@ -70,11 +48,12 @@ int main(int argc, char const *argv[])
     for ( i = 0; i < test_size; i++)
     {
         scanf("%lf %lf %lf %lf %s", &No_sub->x, &No_sub->y, &No_sub->w, &No_sub->z, No_sub->classe);
-        printf("aqui\n");
-        GotClass = classificationClass(No_main, No_sub, k, trein_size);
-        classification = &No_sub->classe;
+        if (strcmp(No_sub->classe, "Iris-setosa") == 0)No_sub->index = 0;
+        else if (strcmp(No_sub->classe, "Iris-versicolor") == 0)No_sub->index = 1;
+        else if (strcmp(No_sub->classe, "Iris-virginica") == 0)No_sub->index = 2;
 
-        if ( GotClass == classification)
+        GotClass = classificationClass(No_main, No_sub, k, trein_size);
+        if ( strcmp(GotClass, No_sub->classe) == 0)
         {
             success++;
         }
@@ -86,12 +65,6 @@ int main(int argc, char const *argv[])
 
 char *classificationClass(Node No_main[], Node *No_sub, int k, int trein_size)
 {
-
-    /*
-        Neste algoritimo foi evitado usar o numero de vizinho par, utilizando 
-        numeros impares para nao haver impate.
-    */
-
     if ( k % 2 == 0)
     {
         k--;
@@ -100,9 +73,10 @@ char *classificationClass(Node No_main[], Node *No_sub, int k, int trein_size)
             k = 1;
         }
     }
-
-    int i;
-    char *classe_aux;
+    k = 3;
+    int i = 0;
+    char *classe_aux, classe_main;
+    classe_aux = &classe_main;
 
     Element el[trein_size];
 
@@ -112,31 +86,50 @@ char *classificationClass(Node No_main[], Node *No_sub, int k, int trein_size)
         el[i].index = No_main[i].index;
     }
 
-    /*
-        Função QuickSort modificada, implementada com a intenção de maximizar o tempo de trocas
-        Vantage: ao implementala o tempo seria consequencia de uma massa de dados de 150 
-        ( total de dados), 105 ( dados de treinamento) e 45 ( dados de teste), ao multiplicalos
-        seriam 4725 e ainda sim o Inserction sorte daria conta porem nao so sera trocado o elemento 
-        principal da função com seu index tambem, ou seja o dobro de elementos...
-    */
-
     QuickSort(el, 0, trein_size);
-    //InserctionSort(el, trein_size);
-    
+
     int cont_setosa = 0;
     int cont_versicolor = 0;
     int cont_virginica = 0;
 
-    for ( i = 0; i < k; i++)
+    for (i = 0; i < k; i++)
     {
-        if (No_main[i].index == 0) cont_setosa++;
-        else if (No_main[i].index == 1) cont_versicolor++;
-        else if (No_main[i].index == 2) cont_virginica++;
+        if (el[i].index == 0)
+        {
+            cont_setosa++;
+        }
+        else
+        {
+            if (el[i].index == 1)
+            {
+                cont_versicolor++;
+            }
+            else
+            {
+                if ( el[i].index == 2)
+                {
+                    cont_virginica++;
+                }
+            }
+        }
     }
 
-    cont_setosa > cont_versicolor && cont_setosa > cont_virginica ? strcpy(classe_aux,"Iris-setosa") :
-    cont_setosa > cont_versicolor && cont_setosa > cont_virginica ? strcpy(classe_aux,"Iris-setosa") : strcpy(classe_aux,"Iris-setosa");
-
+    if ( cont_setosa > cont_versicolor && cont_setosa > cont_virginica)
+    {
+        strcpy(classe_aux, "Iris-setosa");
+    }
+    else
+    {
+        if ( cont_versicolor > cont_setosa && cont_versicolor > cont_virginica)
+        {
+            strcpy(classe_aux, "Iris-versicolor");
+        }
+        else
+        {
+            strcpy(classe_aux,"Iris-virginica");
+        }
+    
+    } 
     return classe_aux;
 }
 
@@ -199,5 +192,50 @@ void swap( Element v[], int i, int j)
 //         }
 //         v[j + 1].dist = escolhido;
 //         v[j + 1].index = escolhido;
+//     }
+// }
+
+// void Input(Node No_main[], int size){
+//     int i;
+    
+//     char buffer[256] = "knn.txt";
+    
+//     FILE *file;
+//     //buffer[0]=opcao+'0';
+//     //sprintf(buffer, "knn.txt");
+//     if((file = fopen(buffer, "r")) != NULL){
+//         for ( i = 0; i < size; i++)
+//         {
+//             fscanf(file, "%i", &v[i]);
+//             fscanf("%lf %lf %lf %lf %s", &No_main[i].x, &No_main[i].y, &No_main[i].w, &No_main[i].z, &No_main[i].classe);
+//             if (strcmp(classe_aux, "Iris-setosa") != 0)No_main[i].index = 0;
+//             else if (strcmp(classe_aux, "Iris-versicolor") != 0)No_main[i].index = 1;
+//             else if (strcmp(classe_aux, "Iris-virginica") != 0)No_main[i].index = 2;
+//         }
+//         fclose(file);
+//     }
+//     /*
+//     srand(time(NULL));
+// 	for(i=0; i<size; i++){
+// 		v[i] =  rand() % 1000000;
+// 	}
+//     printf("\n");
+//     */
+// }
+
+// void input( Node No[], int size)
+// {
+//     FILE *file;
+//     int i;
+//     if (file = fopen("dataset.txt", "r") != NULL)
+//     {
+//         for ( i = 0; i < size; i++)
+//         {
+//             fscanf(file, "%lf %lf %lf %lf %s", &No[i].x, &No[i].y, &No[i].w, &No[i].z, No[i].classe);
+//             if (strcmp(No[i].classe, "Iris-setosa") == 0)No[i].index = 0;
+//             else if (strcmp(No[i].classe, "Iris-versicolor") == 0)No[i].index = 1;
+//             else if (strcmp(No[i].classe, "Iris-virginica") == 0)No[i].index = 2;
+//         }
+//         fclose(file);
 //     }
 // }
