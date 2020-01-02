@@ -58,7 +58,7 @@ int main(int argc, char const *argv[])
             success++;
         }
     }
-    printf("%i\n", success);
+    printf("Correct classes %i -> %i percent data \n", success, (success*100)/45);
 
     return 0;
 }
@@ -128,7 +128,6 @@ char *classificationClass(Node No_main[], Node *No_sub, int k, int trein_size)
         {
             strcpy(classe_aux,"Iris-virginica");
         }
-    
     } 
     return classe_aux;
 }
