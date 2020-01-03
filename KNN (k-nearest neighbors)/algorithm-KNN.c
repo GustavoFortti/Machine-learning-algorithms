@@ -36,8 +36,11 @@ int main(int argc, char const *argv[])
     char *GotClass;
     char *classification;
 
+    printf("Enter line data 106 to 150: (Iris-dataset.txt)\n");
+
     for ( i = 0; i < test_size; i++)
     {
+        //inputPointer(No_sub, i + trein_size + 1);
         scanf("%Lf %Lf %Lf %Lf %s", &No_sub->x, &No_sub->y, &No_sub->w, &No_sub->z, No_sub->classe);
         if (strcmp(No_sub->classe, "Iris-setosa") == 0)No_sub->index = 0;
         else if (strcmp(No_sub->classe, "Iris-versicolor") == 0)No_sub->index = 1;
@@ -129,7 +132,7 @@ void swap(Element v[], int i, int j)
 void input(Node No[], int size)
 {
     FILE *file;
-    file = fopen("dataset.txt", "r");
+    file = fopen("Iris-dataset.txt", "r");
     int i;
     if (file != NULL)
     {
@@ -139,7 +142,35 @@ void input(Node No[], int size)
             if (strcmp(No[i].classe, "Iris-setosa") == 0)No[i].index = 0;
             else if (strcmp(No[i].classe, "Iris-versicolor") == 0)No[i].index = 1;
             else if (strcmp(No[i].classe, "Iris-virginica") == 0)No[i].index = 2;
+            //printf("%Lf %Lf %Lf %Lf %s\n", No[i].x, No[i].y, No[i].w, No[i].z, No[i].classe);
         }
         fclose(file);
     }
 }
+
+/*
+void inputPointer(Node *No, int index)
+{
+    FILE *file;
+    long tam;
+    long double x[4];
+    char classe[50];
+    file = fopen("dataset.txt", "r");
+    if (file != NULL)
+    {        
+        //fseek(file, 2 * sizeof(Node), SEEK_SET);
+        fseek(file, 0, SEEK_END); //Manda o cursor para o fim do arquivo
+        tam = ftell(file);
+
+        fread(&x[0], sizeof(long double), 1, file);
+        //fscanf(file, "%Lf %Lf %Lf %Lf %s", &No->x, &No[i].y, &No[i].w, &No[i].z, No[i].classe);
+        //if (strcmp(No[i].classe, "Iris-setosa") == 0)No[i].index = 0;
+        //else if (strcmp(No[i].classe, "Iris-versicolor") == 0)No[i].index = 1;
+        //else if (strcmp(No[i].classe, "Iris-virginica") == 0)No[i].index = 2;
+        printf("%li\n", tam);
+        //fscanf(file, "%Lf %Lf %Lf %Lf %s\n", &x[0], &x[1], &x[2], &x[3], classe);
+        fprintf(file, "%Lf\n", x[0]);
+        fclose(file);
+    }
+}
+*/
