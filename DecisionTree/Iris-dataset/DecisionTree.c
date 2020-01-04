@@ -4,17 +4,6 @@
 #include <stdbool.h>
 #include "DecisionTree.h"
 
-struct nodo
-{
-    double SepalLength;
-    double SepalWidth;
-    double PetalLength;
-    double PetalWidth;
-    char Class[50];
-    int index;
-    Features feature;
-};
-
 struct features
 {
     double SepalArea;
@@ -24,6 +13,20 @@ struct features
     bool PetalLengthAboveMean;
     bool PetalWidthAboveMean;
 };
+
+    // index 0 = Iris-setosa 1 = Iris-versicolor 2 = Iris-virginica
+
+struct nodo
+{
+    double SepalLength;
+    double SepalWidth;
+    double PetalLength;
+    double PetalWidth;
+    char Class[50];
+    int index;
+    Features FEATURE;
+};
+
 
 int main()
 {
@@ -59,16 +62,18 @@ void CalcFeatures(Nodo No[], int size, double mean[])
     int i;
     for ( i = 0; i < size; i++)
     {
-        No[i].feature.SepalArea = No[i].SepalLength * No[i].SepalWidth;
-        No[i].feature.PetalArea = No[i].PetalLength * No[i].PetalWidth;
-        if ( No[i].SepalLength > mean[0]) No[i].feature.SepalLengthAboveMean = true;
-        else No[i].feature.SepalLengthAboveMean = false;
-        if ( No[i].SepalWidth > mean[0]) No[i].feature.SepalWidthAboveMean = true;
-        else No[i].feature.SepalWidthAboveMean = false;
-        if ( No[i].PetalLength > mean[0]) No[i].feature.PetalLengthAboveMean = true;
-        else No[i].feature.PetalLengthAboveMean = false;
-        if ( No[i].PetalWidth > mean[0]) No[i].feature.PetalWidthAboveMean = true;
-        else No[i].feature.PetalWidthAboveMean = false;
+        No[i].FEATURE.SepalArea = No[i].SepalLength * No[i].SepalWidth;
+        No[i].FEATURE.PetalArea = No[i].PetalLength * No[i].PetalWidth;
+        if ( No[i].SepalLength > mean[0]) No[i].FEATURE.SepalLengthAboveMean = true;
+        else No[i].FEATURE.SepalLengthAboveMean = false;
+        if ( No[i].SepalWidth > mean[0]) No[i].FEATURE.SepalWidthAboveMean = true;
+        else No[i].FEATURE.SepalWidthAboveMean = false;
+        if ( No[i].PetalLength > mean[0]) No[i].FEATURE.PetalLengthAboveMean = true;
+        else No[i].FEATURE.PetalLengthAboveMean = false;
+        if ( No[i].PetalWidth > mean[0]) No[i].FEATURE.PetalWidthAboveMean = true;
+        else No[i].FEATURE.PetalWidthAboveMean = false;
+        printf("%0.2lf %0.2lf %0.2lf %0.2lf %i %0.2lf %0.2lf %d %d %d %d\n", No[i].SepalLength, No[i].SepalWidth, No[i].PetalLength, No[i].PetalWidth, No[i].index, No[i].FEATURE.SepalArea,  No[i].FEATURE.PetalArea, No[i].FEATURE.SepalLengthAboveMean, No[i].FEATURE.SepalWidthAboveMean, No[i].FEATURE.PetalLengthAboveMean, No[i].FEATURE.PetalWidthAboveMean );
+        //printf("%lf %lf\n", No[i].FEATURE.SepalArea,  No[i].FEATURE.PetalArea);
     }
 }
 
@@ -88,6 +93,7 @@ void Mean(Nodo No[], int size, double mean[])
     mean[1] = sum[1] / size;
     mean[2] = sum[2] / size;
     mean[3] = sum[3] / size;
+    //printf("%lf %lf %lf %lf\n", mean[0] , mean[1] , mean[2] , mean[3] );
 }
 
 void input(Nodo No[], int size)
@@ -105,6 +111,7 @@ void input(Nodo No[], int size)
             else if (strcmp(No[i].Class, "Iris-virginica") == 0)No[i].index = 2;
         }
         fclose(file);
+        
     }
 }
 
