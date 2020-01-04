@@ -83,33 +83,74 @@ int main()
 
 void CalcGI(SubSet set[], int size, int i)
 {
-    CalcEntropy(set, size, i);
+    int index; // index e i serao valores aleatorios
+    CalcEntropy(set, size, i, index);
 }
 
-void CalcEntropy(SubSet set[],int size, int i)
+void CalcEntropy(SubSet set[],int size, int i, int index)
 {
     int j;
+    //EntropyFhater Yf Nf
+    int Yf = 0, Nf = 0;
+    
+    for ( j = 0; j < size_group; j++)
+    {
+        if (set[i].No[j].index == index) Yf++;
+    }
+    Nf = size_group - Yf;
+
+    double PYF, PNF, EntropyF;
+    PYF = Yf / (size_group * 1.0);
+    PNF = Nf / (size_group * 1.0);
+    EntropyF = - ( PYF * log2(PYF) + PNF * log2(PNF));
+
+    // EntropySon Left
     int y[size_var], n[size_var];
 
-    for ( j = 0; j < size / size_group; j++)
+    for ( j = 0; j < size_group; j++)
     {
-        y[0] = set[i].No[j].feature.SepalLengthAboveMean;
-        y[1] = set[i].No[j].feature.SepalWidthAboveMean;
-        y[2] = set[i].No[j].feature.PetalLengthAboveMean;
-        y[3] = set[i].No[j].feature.PetalWidthAboveMean;
+        if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == true) y[0]++;
+        if ( set[i].No[j].index == index && set[i].No[j].feature.SepalWidthAboveMean  == true) y[1]++;
+        if ( set[i].No[j].index == index && set[i].No[j].feature.PetalLengthAboveMean == true) y[2]++;
+        if ( set[i].No[j].index == index && set[i].No[j].feature.PetalWidthAboveMean  == true) y[3]++;
     }
-    for ( j = -1; j < size_var; j++, n[i] = size_group - y[i]);
+    for ( j = -1; j < size_var; j++, n[j] = Yf - y[j]);
     
-    double entropy[size_var];
-    double Py[size_var];
-    double Pn[size_var];
-
+    double entropyLeft[size_var];
+    double PyLeft[size_var];
+    double PnLeft[size_var];
+    
     for ( j = 0; j < size_var; j++)
     {
-        Py[j] = y[j] / (size_group * 1.0);
-        Pn[j] = n[j] / (size_group * 1.0);
-        entropy[j] = - ( Py[j] * log2(Py[j]) + Pn[j] * log2(Pn[j]));
+        PyLeft[j] = y[j] / (size_group * 1.0);
+        PnLeft[j] = n[j] / (size_group * 1.0);
+        entropyLeft[j] = - ( PyLeft[j] * log2(PyLeft[j]) + PnLeft[j] * log2(PnLeft[j]));
+        y[j] = 0;
+        n[j] = 0;
     }
+
+    // EntropySon Right
+
+    for ( j = 0; j < size_group; j++)
+    {
+        if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == true) y[0]++;
+        if ( set[i].No[j].index == index && set[i].No[j].feature.SepalWidthAboveMean  == true) y[1]++;
+        if ( set[i].No[j].index == index && set[i].No[j].feature.PetalLengthAboveMean == true) y[2]++;
+        if ( set[i].No[j].index == index && set[i].No[j].feature.PetalWidthAboveMean  == true) y[3]++;
+    }
+    for ( j = -1; j < size_var; j++, n[j] = Nf - y[j]);
+    
+    double entropyRight[size_var];
+    double PyRight[size_var];
+    double PnRight[size_var];
+    
+    for ( j = 0; j < size_var; j++)
+    {
+        PyRight[j] = y[j] / (size_group * 1.0);
+        PnRight[j] = n[j] / (size_group * 1.0);
+        entropyRight[j] = - ( PyRight[j] * log2(PyRight[j]) + PnRight[j] * log2(PnRight[j]));
+    }
+
 
 }
 

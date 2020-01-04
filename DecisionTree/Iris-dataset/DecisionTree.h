@@ -11,6 +11,6 @@ void input(SubSet set[], int size);
 void CalcFeatures(SubSet set[], int size);
 void CalcMean(SubSet set[], int size);
 void CalcGI(SubSet set[], int size, int i);
-void CalcEntropy(SubSet set[],int size, int i);
+void CalcEntropy(SubSet set[],int size, int i, int index);
 
 #endif
