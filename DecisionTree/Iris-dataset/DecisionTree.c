@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <math.h>
 #include "DecisionTree.h"
 
-#define size_group 15           // groups number -> 1 with 15 plants
+#define size_group 6           // groups number -> 1 with 15 plants
+#define size_var 4             // numero de variaveis booleanas em features
 
 struct features
 {
@@ -24,7 +26,7 @@ struct nodo
     double PetalWidth;
     char Class[50];
     int index;                  // index 0 = Iris-setosa 1 = Iris-versicolor 2 = Iris-virginica
-    Features FEATURE;
+    Features feature;
 };
 
 struct means
@@ -33,6 +35,14 @@ struct means
     double MeanSepalWidth;
     double MeanPetalLength;
     double MeanPetalWidth;
+};
+
+struct InformationGain
+{
+    double IG_MeanSepalLength;
+    double IG_MeanSepalWidth;
+    double IG_MeanPetalLength;
+    double IG_MeanPetalWidth;
 };
 
 struct subset
@@ -66,6 +76,41 @@ int main()
 
     CalcFeatures(set, data_size);
 
+    //calcular entropia
+    
+
+}
+
+void CalcGI(SubSet set[], int size, int i)
+{
+    CalcEntropy(set, size, i);
+}
+
+void CalcEntropy(SubSet set[],int size, int i)
+{
+    int j;
+    int y[size_var], n[size_var];
+
+    for ( j = 0; j < size / size_group; j++)
+    {
+        y[0] = set[i].No[j].feature.SepalLengthAboveMean;
+        y[1] = set[i].No[j].feature.SepalWidthAboveMean;
+        y[2] = set[i].No[j].feature.PetalLengthAboveMean;
+        y[3] = set[i].No[j].feature.PetalWidthAboveMean;
+    }
+    for ( j = -1; j < size_var; j++, n[i] = size_group - y[i]);
+    
+    double entropy[size_var];
+    double Py[size_var];
+    double Pn[size_var];
+
+    for ( j = 0; j < size_var; j++)
+    {
+        Py[j] = y[j] / (size_group * 1.0);
+        Pn[j] = n[j] / (size_group * 1.0);
+        entropy[j] = - ( Py[j] * log2(Py[j]) + Pn[j] * log2(Pn[j]));
+    }
+
 }
 
 void CalcFeatures(SubSet set[], int size)
@@ -75,26 +120,26 @@ void CalcFeatures(SubSet set[], int size)
     {
         for ( j = 0; j < size_group; j++)
         {
-            set[i].No[j].FEATURE.SepalArea = set[i].No[j].SepalLength * set[i].No[j].SepalWidth;
-            set[i].No[j].FEATURE.PetalArea = set[i].No[j].PetalLength * set[i].No[j].PetalWidth;
-            if ( set[i].No[j].SepalLength > set[i].Mean.MeanSepalLength) set[i].No[j].FEATURE.SepalLengthAboveMean = true;
-            else set[i].No[j].FEATURE.SepalLengthAboveMean = false;
-            if ( set[i].No[j].SepalWidth > set[i].Mean.MeanSepalWidth) set[i].No[j].FEATURE.SepalWidthAboveMean = true;
-            else set[i].No[j].FEATURE.SepalWidthAboveMean = false;
-            if ( set[i].No[j].PetalLength > set[i].Mean.MeanPetalLength) set[i].No[j].FEATURE.PetalLengthAboveMean = true;
-            else set[i].No[j].FEATURE.PetalLengthAboveMean = false;
-            if ( set[i].No[j].PetalWidth > set[i].Mean.MeanPetalWidth) set[i].No[j].FEATURE.PetalWidthAboveMean = true;
-            else set[i].No[j].FEATURE.PetalWidthAboveMean = false;
-            printf("group -> %i - %0.2lf %0.2lf %0.2lf %0.2lf %i %0.2lf %0.2lf\t %d %d %d %d\n", i+1,set[i].No[j].SepalLength, set[i].No[j].SepalWidth, set[i].No[j].PetalLength, set[i].No[j].PetalWidth, set[i].No[j].index, set[i].No[j].FEATURE.SepalArea,  set[i].No[j].FEATURE.PetalArea, set[i].No[j].FEATURE.SepalLengthAboveMean, set[i].No[j].FEATURE.SepalWidthAboveMean, set[i].No[j].FEATURE.PetalLengthAboveMean, set[i].No[j].FEATURE.PetalWidthAboveMean );
+            set[i].No[j].feature.SepalArea = set[i].No[j].SepalLength * set[i].No[j].SepalWidth;
+            set[i].No[j].feature.PetalArea = set[i].No[j].PetalLength * set[i].No[j].PetalWidth;
+            if ( set[i].No[j].SepalLength > set[i].Mean.MeanSepalLength) set[i].No[j].feature.SepalLengthAboveMean = true;
+            else set[i].No[j].feature.SepalLengthAboveMean = false;
+            if ( set[i].No[j].SepalWidth > set[i].Mean.MeanSepalWidth) set[i].No[j].feature.SepalWidthAboveMean = true;
+            else set[i].No[j].feature.SepalWidthAboveMean = false;
+            if ( set[i].No[j].PetalLength > set[i].Mean.MeanPetalLength) set[i].No[j].feature.PetalLengthAboveMean = true;
+            else set[i].No[j].feature.PetalLengthAboveMean = false;
+            if ( set[i].No[j].PetalWidth > set[i].Mean.MeanPetalWidth) set[i].No[j].feature.PetalWidthAboveMean = true;
+            else set[i].No[j].feature.PetalWidthAboveMean = false;
+            printf("group => %i \t- %0.2lf | %0.2lf | %0.2lf | %0.2lf | %s\t => %i | %0.2lf | %0.2lf\t|\t %d %d %d %d\n", i+1,set[i].No[j].SepalLength, set[i].No[j].SepalWidth, set[i].No[j].PetalLength, set[i].No[j].PetalWidth, set[i].No[j].Class, set[i].No[j].index, set[i].No[j].feature.SepalArea,  set[i].No[j].feature.PetalArea, set[i].No[j].feature.SepalLengthAboveMean, set[i].No[j].feature.SepalWidthAboveMean, set[i].No[j].feature.PetalLengthAboveMean, set[i].No[j].feature.PetalWidthAboveMean );
+            //else printf("group-=>-%i-\t--%0.2lf-|-%0.2lf-|-%0.2lf-|-%0.2lf-|-%s\t-=>-%i-|-%0.2lf-|-%0.2lf\t|\t-%d-%d-%d-%d\n", i+1,set[i].No[j].SepalLength, set[i].No[j].SepalWidth, set[i].No[j].PetalLength, set[i].No[j].PetalWidth, set[i].No[j].Class, set[i].No[j].index, set[i].No[j].feature.SepalArea,  set[i].No[j].feature.PetalArea, set[i].No[j].feature.SepalLengthAboveMean, set[i].No[j].feature.SepalWidthAboveMean, set[i].No[j].feature.PetalLengthAboveMean, set[i].No[j].feature.PetalWidthAboveMean );
         }
-        
     }
 }
 
 void CalcMean(SubSet set[], int size)
 {
     int i, j;
-    double sum[4];
+    double sum[size_var];
     // [0]SepalLengthMean [1]SepalWidthMean [2]PetalLengthMean [3]PetalWidthMean
     for ( i = 0; i < size / size_group; i++)
     {
@@ -110,7 +155,7 @@ void CalcMean(SubSet set[], int size)
         set[i].Mean.MeanSepalWidth = sum[1] / size_group;
         set[i].Mean.MeanPetalLength = sum[2] / size_group;
         set[i].Mean.MeanPetalWidth = sum[3] / size_group;
-        for ( j = -1; j < 4; j++, sum[j] = 0);
+        for ( j = -1; j < size_var; j++, sum[j] = 0);
         //printf("%lf %lf %lf %lf\n", set[i].Mean.MeanSepalLength , set[i].Mean.MeanSepalWidth , set[i].Mean.MeanPetalLength , set[i].Mean.MeanPetalWidth );
     }
 }
