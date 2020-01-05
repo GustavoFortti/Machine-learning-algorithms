@@ -51,7 +51,7 @@ struct subset
     Means Mean;
 };
 
-int main()
+int main(int argc, char const *argv[])
 {
     const int data_size = 150;
     const int trein_size = 105;
@@ -78,19 +78,16 @@ int main()
 
     //calcular entropia
     
-    int i = 24;
-    CalcIG(set, data_size, i);
+    int i = 24, index = 0;
+    CalcIG(set, data_size, i, index);
 
 }
 
-void CalcIG(SubSet set[], int size, int i)
+void CalcIG(SubSet set[], int size, int i, int index)
 {
-    int index = 0; // index e i serao valores aleatorios
-    CalcEntropy(set, size, i, index);
-}
+    //CalcEntropy(set, size, i, index);
 
-void CalcEntropy(SubSet set[],int size, int i, int index)
-{
+    ///////////////////////////////////////////////////////// ENTROPY /////////////////////////////////////////////////////////
     int j;
     //EntropyFhater
     int Yf = 0, Nf = 0;
@@ -157,6 +154,15 @@ void CalcEntropy(SubSet set[],int size, int i, int index)
         if (PyRight[j] == 0 || PnRight[j] == 0) entropyRight[j] = 0;
         //printf("%lf\n", entropyRight[j]);
     }
+
+    ///////////////////////////////////////////////////////// Weight /////////////////////////////////////////////////////////
+
+    
+}
+
+void CalcEntropy(SubSet set[],int size, int i, int index)
+{
+
 }
 
 void CalcFeatures(SubSet set[], int size)
