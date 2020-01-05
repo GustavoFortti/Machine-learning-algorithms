@@ -8,7 +8,6 @@
 
 typedef struct features Features;
 typedef struct nodo Nodo;
-//typedef struct means Means;
 typedef struct subset SubSet;
 typedef struct InformationGain InfoGain;
 
@@ -16,6 +15,5 @@ void input(SubSet set[]);
 void CalcFeatures(SubSet set[]);
 void CalcMean(SubSet set[], double mean[size_var][size_group]);
 void CalcIG(SubSet set[], int i, int index);
-//void CalcEntropy(SubSet set[], int i, int index);
 
 #endif
