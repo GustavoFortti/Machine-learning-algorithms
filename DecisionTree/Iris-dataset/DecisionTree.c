@@ -41,15 +41,12 @@ struct subset
 {
     Nodo No[size_ind]; 
     InfoGain IG;
-    //Means Mean;
 };
 
 int main(int argc, char const *argv[])
 {
-    //const int size_pop = 150;
     SubSet set[size_pop / size_ind];
 
-    //Nodo No[size_pop];
     input(set);
 
     /*
@@ -68,8 +65,6 @@ int main(int argc, char const *argv[])
 
     CalcFeatures(set);
 
-    //calcular entropia
-    
     int i = 24, index = 0;
     CalcIG(set, i, index);
 
@@ -154,10 +149,10 @@ void CalcIG(SubSet set[], int i, int index)
 
     for ( j = 0; j < size_ind; j++)
     {
-        if ( set[i].No[j].feature.SepalLengthAboveMean == 1) SumTrue[0]++;
-        if ( set[i].No[j].feature.SepalWidthAboveMean  == 1) SumTrue[1]++;
-        if ( set[i].No[j].feature.PetalLengthAboveMean == 1) SumTrue[2]++;
-        if ( set[i].No[j].feature.PetalWidthAboveMean  == 1) SumTrue[3]++;
+        if ( set[i].No[j].feature.SepalLengthAboveMean == true) SumTrue[0]++;
+        if ( set[i].No[j].feature.SepalWidthAboveMean  == true) SumTrue[1]++;
+        if ( set[i].No[j].feature.PetalLengthAboveMean == true) SumTrue[2]++;
+        if ( set[i].No[j].feature.PetalWidthAboveMean  == true) SumTrue[3]++;
     }
     for ( j = -1; j < size_ind; j++, SumFalse[j] = size_ind - SumTrue[j]);
 
@@ -172,8 +167,13 @@ void CalcIG(SubSet set[], int i, int index)
     
     ///////////////////////////////////////////////////////// Information Gain /////////////////////////////////////////////////////////
 
-    
+    double GI[size_var];
 
+    for ( j = 0; j < size_var; j++)
+    {
+        GI[j] = EntropyF - ( ( WeightLeft[j] * entropyLeft[j]) + ( WeightRight[j] * entropyRight[j]));
+        //printf("%lf \n", GI[j]);
+    }
 }
 
 void CalcFeatures(SubSet set[])
