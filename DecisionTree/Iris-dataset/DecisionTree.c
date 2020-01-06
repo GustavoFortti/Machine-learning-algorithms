@@ -65,63 +65,86 @@ int main(int argc, char const *argv[])
 
     CalcFeatures(set);
     int i = 0, index = 0;
-    CalcIG(set, i, index);
+        CalcIG(set, i, index);
     for ( i = 0; i < 25; i++)
     {
         /* code */
     }
     
-
+    return 0;
 }
 void CalcIG(SubSet set[], int i, int index)
 {
-/*
-    //CalcEntropy(set, size_pop, i, index);
-    
     int j, k;
-
+    ///////////////////////////////////////////////////////// ENTROPY /////////////////////////////////////////////////////////
     int SumTrue[size_var] = {0};
     int SumFalse[size_var] = {0};
-
-    for ( j = 0; j < size_ind; j++)
-    {
-        if ( set[i].No[j].feature.SepalLengthAboveMean == true) SumTrue[0]++;
-        if ( set[i].No[j].feature.SepalWidthAboveMean  == true) SumTrue[1]++;
-        if ( set[i].No[j].feature.PetalLengthAboveMean == true) SumTrue[2]++;
-        if ( set[i].No[j].feature.PetalWidthAboveMean  == true) SumTrue[3]++;
-    }
-    for ( j = -1; j < size_ind; j++, SumFalse[j] = size_ind - SumTrue[j]);
-    ///////////////////////////////////////////////////////// ENTROPY /////////////////////////////////////////////////////////
-    //EntropyFhater
+    int Ly[size_var] = {0}, Ln[size_var] = {0};
+    int Ry[size_var] = {0}, Rn[size_var] = {0};
+    
     int Yf = 0;
     int Nf = 0;
-    
+
+    // for ( j = 0; j < size_ind; j++)
+    // {
+    //     if (set[i].No[j].index == index) Yf++;
+    // }
+    // Nf = size_ind - Yf;
+
     for ( j = 0; j < size_ind; j++)
-    {
+    {   
         if (set[i].No[j].index == index) Yf++;
+        if ( set[i].No[j].feature.SepalLengthAboveMean == true) SumTrue[0]++;
+        if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == true) Ly[0]++;
+        // if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == false) Ry[0]++;
+        if ( set[i].No[j].feature.SepalWidthAboveMean  == true) SumTrue[1]++;
+        if ( set[i].No[j].index == index && set[i].No[j].feature.SepalWidthAboveMean  == true) Ly[1]++;
+        // if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == false) Ry[1]++;
+        if ( set[i].No[j].feature.PetalLengthAboveMean == true) SumTrue[2]++;
+        if ( set[i].No[j].index == index && set[i].No[j].feature.PetalLengthAboveMean == true) Ly[2]++;
+        // if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == false) Ry[2]++;
+        if ( set[i].No[j].feature.PetalWidthAboveMean  == true) SumTrue[3]++;
+        if ( set[i].No[j].index == index && set[i].No[j].feature.PetalWidthAboveMean  == true) Ly[3]++;
+        // if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == false) Ry[3]++;
     }
     Nf = size_ind - Yf;
-
-    double PYF = 0, PNF = 0, EntropyF = 0;
-    PYF = Yf * 1.0 / (size_ind * 1.0);
-    PNF = Nf * 1.0 / (size_ind * 1.0);
-    EntropyF = - ( PYF * log2(PYF) + PNF * log2(PNF));
-    if (PYF == 0 || PNF == 0) EntropyF = 0;
-    //printf("Pai = %lf\n", EntropyF);
-
-    // EntropySon Left SETOSA
-    int Ly[size_var] = {0}, Ln[size_var] = {0};
-
-    for ( j = 0; j < size_ind; j++)
+    for ( j = 0; j < size_var; j++)
     {
-        if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == true) Ly[0]++;
-        if ( set[i].No[j].index == index && set[i].No[j].feature.SepalWidthAboveMean  == true) Ly[1]++;
-        if ( set[i].No[j].index == index && set[i].No[j].feature.PetalLengthAboveMean == true) Ly[2]++;
-        if ( set[i].No[j].index == index && set[i].No[j].feature.PetalWidthAboveMean  == true) Ly[3]++;
+        SumFalse[j] = size_ind - SumTrue[j];
+        Ln[j] = SumTrue[j] - Ly[j];
+        Ry[j] = Yf - Ly[j];
+    }
+    j = 0;
+    for ( j = -1; j < size_var; j++, Rn[j] = SumFalse[j] - Ry[j]);
+    for ( j = 0; j < size_var; j++)
+    {
+        printf(" %i / %i   %i / %i  - %i / %i   %i / %i\n", Ly[j], SumTrue[j], Ln[j], SumTrue[j], Ry[j], SumFalse[j], Rn[j], SumFalse[j]);
     }
 
-    for ( j = -1; j < size_var; j++, Ln[j] = Yf - Ly[j]);
-    printf("%i %i %i\n", Ly[1], Ln[1], SumFalse[1]);
+    //EntropyFhater
+
+    
+
+    // double PYF = 0, PNF = 0, EntropyF = 0;
+    // PYF = Yf * 1.0 / (size_ind * 1.0);
+    // PNF = Nf * 1.0 / (size_ind * 1.0);
+    // EntropyF = - ( PYF * log2(PYF) + PNF * log2(PNF));
+    // if (PYF == 0 || PNF == 0) EntropyF = 0;
+    // //printf("Pai = %lf\n", EntropyF);
+
+    // EntropySon Left SETOSA
+
+    // for ( j = 0; j < size_ind; j++)
+    // {
+    //     if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == true) Ly[0]++;
+    //     if ( set[i].No[j].index == index && set[i].No[j].feature.SepalWidthAboveMean  == true) Ly[1]++;
+    //     if ( set[i].No[j].index == index && set[i].No[j].feature.PetalLengthAboveMean == true) Ly[2]++;
+    //     if ( set[i].No[j].index == index && set[i].No[j].feature.PetalWidthAboveMean  == true) Ly[3]++;
+    // }
+    // for ( j = -1; j < size_var; j++, Ln[j] = Yf - Ly[j]);
+    // printf("%i %i %i\n", Ly[1], Ln[1], SumFalse[1]);
+
+    /*
     double entropyLeft[size_var] = {0};
     double PyLeft[size_var] = {0};
     double PnLeft[size_var] = {0};
@@ -137,7 +160,7 @@ void CalcIG(SubSet set[], int i, int index)
     //printf("filho esq = %lf\n", entropyLeft[0]);
 
     // EntropySon Right NAO SETOSA
-    int Ry[size_var] = {0}, Rn[size_var] = {0};
+    
 
     for ( j = 0; j < size_ind; j++)
     {
@@ -165,12 +188,7 @@ void CalcIG(SubSet set[], int i, int index)
     //printf("filho dir = %lf\n", entropyRight[0]);
 
     ///////////////////////////////////////////////////////// Weight /////////////////////////////////////////////////////////
-
-
-
-
     
-    //printf("%i %i \n", SumTrue[1], SumFalse[1]);
     double WeightLeft[size_var], WeightRight[size_var];
 
     for ( j = -1; j < size_var; j++, WeightLeft[j] = SumFalse[j] * 1.0 / size_ind, WeightRight[j] = SumTrue[j] * 1.0 / size_ind);
@@ -224,7 +242,7 @@ void CalcFeatures(SubSet set[])
 void CalcMean(SubSet set[], double mean[size_var][size_group])
 {
     int i, j;
-    double sum[size_var];
+    double sum[size_var] = {0};
     // [0]SepalLengthMean [1]SepalWidthMean [2]PetalLengthMean [3]PetalWidthMean
     for ( i = 0; i < size_pop / size_ind; i++)
     {
