@@ -64,11 +64,14 @@ int main(int argc, char const *argv[])
     //CalcMean(set, size_pop);
 
     CalcFeatures(set);
-    int i = 0, index = 0;
-        CalcIG(set, i, index);
-    for ( i = 0; i < 25; i++)
+    int i = 0, index = 2;
+    for ( index = 0; index < 3; index++)
     {
-        /* code */
+        for (  i = 0; i < 25; i++)
+        {
+            CalcIG(set, i, index);
+        }
+        
     }
     
     return 0;
@@ -81,134 +84,78 @@ void CalcIG(SubSet set[], int i, int index)
     int SumFalse[size_var] = {0};
     int Ly[size_var] = {0}, Ln[size_var] = {0};
     int Ry[size_var] = {0}, Rn[size_var] = {0};
-    
     int Yf = 0;
     int Nf = 0;
-
-    // for ( j = 0; j < size_ind; j++)
-    // {
-    //     if (set[i].No[j].index == index) Yf++;
-    // }
-    // Nf = size_ind - Yf;
 
     for ( j = 0; j < size_ind; j++)
     {   
         if (set[i].No[j].index == index) Yf++;
         if ( set[i].No[j].feature.SepalLengthAboveMean == true) SumTrue[0]++;
         if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == true) Ly[0]++;
-        // if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == false) Ry[0]++;
         if ( set[i].No[j].feature.SepalWidthAboveMean  == true) SumTrue[1]++;
         if ( set[i].No[j].index == index && set[i].No[j].feature.SepalWidthAboveMean  == true) Ly[1]++;
-        // if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == false) Ry[1]++;
         if ( set[i].No[j].feature.PetalLengthAboveMean == true) SumTrue[2]++;
         if ( set[i].No[j].index == index && set[i].No[j].feature.PetalLengthAboveMean == true) Ly[2]++;
-        // if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == false) Ry[2]++;
         if ( set[i].No[j].feature.PetalWidthAboveMean  == true) SumTrue[3]++;
         if ( set[i].No[j].index == index && set[i].No[j].feature.PetalWidthAboveMean  == true) Ly[3]++;
-        // if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == false) Ry[3]++;
     }
+
     Nf = size_ind - Yf;
+
     for ( j = 0; j < size_var; j++)
     {
         SumFalse[j] = size_ind - SumTrue[j];
         Ln[j] = SumTrue[j] - Ly[j];
         Ry[j] = Yf - Ly[j];
     }
-    j = 0;
     for ( j = -1; j < size_var; j++, Rn[j] = SumFalse[j] - Ry[j]);
-    for ( j = 0; j < size_var; j++)
-    {
-        printf(" %i / %i   %i / %i  - %i / %i   %i / %i\n", Ly[j], SumTrue[j], Ln[j], SumTrue[j], Ry[j], SumFalse[j], Rn[j], SumFalse[j]);
-    }
 
-    //EntropyFhater
-
-    
-
-    // double PYF = 0, PNF = 0, EntropyF = 0;
-    // PYF = Yf * 1.0 / (size_ind * 1.0);
-    // PNF = Nf * 1.0 / (size_ind * 1.0);
-    // EntropyF = - ( PYF * log2(PYF) + PNF * log2(PNF));
-    // if (PYF == 0 || PNF == 0) EntropyF = 0;
-    // //printf("Pai = %lf\n", EntropyF);
-
-    // EntropySon Left SETOSA
-
-    // for ( j = 0; j < size_ind; j++)
-    // {
-    //     if ( set[i].No[j].index == index && set[i].No[j].feature.SepalLengthAboveMean == true) Ly[0]++;
-    //     if ( set[i].No[j].index == index && set[i].No[j].feature.SepalWidthAboveMean  == true) Ly[1]++;
-    //     if ( set[i].No[j].index == index && set[i].No[j].feature.PetalLengthAboveMean == true) Ly[2]++;
-    //     if ( set[i].No[j].index == index && set[i].No[j].feature.PetalWidthAboveMean  == true) Ly[3]++;
-    // }
-    // for ( j = -1; j < size_var; j++, Ln[j] = Yf - Ly[j]);
-    // printf("%i %i %i\n", Ly[1], Ln[1], SumFalse[1]);
-
-    /*
-    double entropyLeft[size_var] = {0};
-    double PyLeft[size_var] = {0};
-    double PnLeft[size_var] = {0};
-    
-    for ( j = 0; j < size_var; j++)
-    {
-        PyLeft[j] = Ly[j] * 1.0 / (SumFalse[j] * 1.0);
-        PnLeft[j] = Ln[j] * 1.0 / (SumFalse[j] * 1.0);
-        entropyLeft[j] = - ( PyLeft[j] * log2(PyLeft[j]) + PnLeft[j] * log2(PnLeft[j]));
-        if (PyLeft[j] == 0 || PnLeft[j] == 0) entropyLeft[j] = 0;
-        //printf("filho esq = %lf\n", entropyLeft[j]);
-    }
-    //printf("filho esq = %lf\n", entropyLeft[0]);
-
-    // EntropySon Right NAO SETOSA
-    
-
-    for ( j = 0; j < size_ind; j++)
-    {
-        if ( set[i].No[j].index != index && set[i].No[j].feature.SepalLengthAboveMean == true) Ry[0]++;
-        if ( set[i].No[j].index != index && set[i].No[j].feature.SepalWidthAboveMean  == true) Ry[1]++;
-        if ( set[i].No[j].index != index && set[i].No[j].feature.PetalLengthAboveMean == true) Ry[2]++;
-        if ( set[i].No[j].index != index && set[i].No[j].feature.PetalWidthAboveMean  == true) Ry[3]++;
-    }
-    for ( j = -1; j < size_var; j++, Rn[j] = Nf - Ry[j]);
-    printf("%i %i %i\n", Ry[1], Rn[1], SumTrue[1]);
-    
     double entropyRight[size_var] = {0};
     double PyRight[size_var] = {0};
     double PnRight[size_var] = {0};
     
+    double entropyLeft[size_var] = {0};
+    double PyLeft[size_var] = {0};
+    double PnLeft[size_var] = {0};
+
     for ( j = 0; j < size_var; j++)
     {
-        PyRight[j] = Ry[j] * 1.0 / (SumTrue[j] * 1.0);
-        PnRight[j] = Rn[j] * 1.0 / (SumTrue[j] * 1.0);
+        PyRight[j] = Ry[j] * 1.0 / (SumFalse[j] * 1.0);
+        PnRight[j] = Rn[j] * 1.0 / (SumFalse[j] * 1.0);
         entropyRight[j] = - ( PyRight[j] * log2(PyRight[j]) + PnRight[j] * log2(PnRight[j]));
         if (PyRight[j] == 0 || PnRight[j] == 0) entropyRight[j] = 0;
-        //printf("filho dir = %lf\n", entropyRight[j]); 
+        PyLeft[j] = Ly[j] * 1.0 / (SumTrue[j] * 1.0);
+        PnLeft[j] = Ln[j] * 1.0 / (SumTrue[j] * 1.0);
+        entropyLeft[j] = - ( PyLeft[j] * log2(PyLeft[j]) + PnLeft[j] * log2(PnLeft[j]));
+        if (PyLeft[j] == 0 || PnLeft[j] == 0) entropyLeft[j] = 0;
     }
-    //printf("%lf %lf\n", PyRight[0], PnRight[0]);
-    //printf("filho dir = %lf\n", entropyRight[0]);
+    
+    //EntropyFhater
+    double PYF = 0, PNF = 0, EntropyF = 0;
+    PYF = Yf * 1.0 / (size_ind * 1.0);
+    PNF = Nf * 1.0 / (size_ind * 1.0);
+    EntropyF = - ( PYF * log2(PYF) + PNF * log2(PNF));
+    if (PYF == 0 || PNF == 0) EntropyF = 0;
 
     ///////////////////////////////////////////////////////// Weight /////////////////////////////////////////////////////////
-    
-    double WeightLeft[size_var], WeightRight[size_var];
+    double WeightLeft[size_var] = {0}, WeightRight[size_var] = {0};
 
-    for ( j = -1; j < size_var; j++, WeightLeft[j] = SumFalse[j] * 1.0 / size_ind, WeightRight[j] = SumTrue[j] * 1.0 / size_ind);
-    //printf("peso %lf %lf\n",WeightLeft[0], WeightRight[0]);
-    for ( j = 0; j < size_var; j++)
+    for ( j = -1; j < size_var; j++)
     {
-        printf("peso %lf %lf %lf %lf\n",WeightLeft[j], entropyLeft[j], WeightRight[j], entropyRight[j]);
+        WeightLeft[j] = SumTrue[j] * 1.0 / size_ind;
+        WeightRight[j] = SumFalse[j] * 1.0 / size_ind;
     }
-    
-    ///////////////////////////////////////////////////////// Information Gain /////////////////////////////////////////////////////////
 
+    ///////////////////////////////////////////////////////// Information Gain /////////////////////////////////////////////////////////
     double GI[size_var] = {0};
 
     for ( j = 0; j < size_var; j++)
     {
         GI[j] = EntropyF - ( ( WeightRight[j] * entropyRight[j]) + ( WeightLeft[j] * entropyLeft[j]));
-        printf("%lf %i\n", GI[j], i);
+        //printf("%lf \n", GI[j]);
     }
-*/
 }
+
 void CalcFeatures(SubSet set[])
 {
 
@@ -229,12 +176,7 @@ void CalcFeatures(SubSet set[])
             else set[i].No[j].feature.PetalLengthAboveMean = false;
             if ( set[i].No[j].PetalWidth > mean[3][i]) set[i].No[j].feature.PetalWidthAboveMean = true;
             else set[i].No[j].feature.PetalWidthAboveMean = false;
-            if ( i == 0)
-            {
-                printf("group => %i \t- %0.2lf | %0.2lf | %0.2lf | %0.2lf | %s\t => %i | %0.2lf | %0.2lf\t|\t %d %d %d %d\n", i,set[i].No[j].SepalLength, set[i].No[j].SepalWidth, set[i].No[j].PetalLength, set[i].No[j].PetalWidth, set[i].No[j].Class, set[i].No[j].index, set[i].No[j].feature.SepalArea,  set[i].No[j].feature.PetalArea, set[i].No[j].feature.SepalLengthAboveMean, set[i].No[j].feature.SepalWidthAboveMean, set[i].No[j].feature.PetalLengthAboveMean, set[i].No[j].feature.PetalWidthAboveMean );
-                /* code */
-            }
-            
+            printf("group => %i \t- %0.2lf | %0.2lf | %0.2lf | %0.2lf | %s\t => %i | %0.2lf | %0.2lf\t|\t %d %d %d %d\n", i,set[i].No[j].SepalLength, set[i].No[j].SepalWidth, set[i].No[j].PetalLength, set[i].No[j].PetalWidth, set[i].No[j].Class, set[i].No[j].index, set[i].No[j].feature.SepalArea,  set[i].No[j].feature.PetalArea, set[i].No[j].feature.SepalLengthAboveMean, set[i].No[j].feature.SepalWidthAboveMean, set[i].No[j].feature.PetalLengthAboveMean, set[i].No[j].feature.PetalWidthAboveMean );
         }
     }
 }
