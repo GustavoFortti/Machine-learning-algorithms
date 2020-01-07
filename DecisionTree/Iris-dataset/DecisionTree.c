@@ -17,11 +17,11 @@ struct features
 
 struct InformationGain
 {
-    double IIG[size_vet]; // , IG_SepalLength , IG_SepalWidth , IG_PetalLength , IG_PetalWidth 
-    double IG_SepalLength;
-    double IG_SepalWidth;
-    double IG_PetalLength;
-    double IG_PetalWidth;
+    // double IG_SepalLength;
+    // double IG_SepalWidth;
+    // double IG_PetalLength;
+    // double IG_PetalWidth;
+    double IG_vet[4];
 };
 
 struct nodo
@@ -33,8 +33,8 @@ struct nodo
     char Class[50];
     int index;                  // index 0 = Iris-setosa 1 = Iris-versicolor 2 = Iris-virginica
     Features feature;
-    double Length_Width[size_vet];
-    bool Ffeature[size_vet] //SepalLengthAboveMean ,SepalWidthAboveMean ,PetalLengthAboveMean ,PetalWidthAboveMean
+    //double Length_Width[size_vet];
+    //bool Ffeature[size_vet] //SepalLengthAboveMean ,SepalWidthAboveMean ,PetalLengthAboveMean ,PetalWidthAboveMean
 };
 
 struct subset
@@ -60,18 +60,52 @@ int main(int argc, char const *argv[])
 
     CalcFeatures(set);
 
-    int i, index;
-    for ( index = 0; index < 3; index++)
+    int i, index, block, k, j;
+
+    for ( index = 0; index < size_plant; index++)
     {
-        for (  i = 0; i < 25; i++)
+        for ( i = 0; i < size_group; i++)
         {
             CalcIG(set, i, index);
         }
     }
     
+    // for ( i = 0; i < size_group; i++)
+    // {
+    //     for ( index = 0; index < size_plant; index++)
+    //     {
+    //         printf("%lf %lf %lf %lf | index -> %i | group -> %i\n" ,set[i].IG[index].IG_SepalLength, set[i].IG[index].IG_SepalWidth, set[i].IG[index].IG_PetalLength, set[i].IG[index].IG_PetalWidth, index, i);
+    //     }
+    // }
 
+
+    // for ( i = 0; i < size_group; i++)
+    // {
+    //     for ( index = 0; index < size_plant; index++)
+    //     {
+    //         for ( j = 0; j < size_vet; j++)
+    //         {
+    //             printf("%lf | \tNo %i \t| index %i \t| group -> %i\n", set[i].IG[index].IG_vet[j], k, index, i);
+    //             k++;
+    //         }
+    //     }
+    // }
+
+    CrossValidation(set, i, index, block);
+    
     return 0;
 }
+
+
+void CrossValidation(SubSet set[], int i, int index, int block)
+{
+    //score
+    int j;
+    double maior[size_plant];
+    double IG_aux[size_vet][size_plant];
+
+}
+
 void CalcIG(SubSet set[], int i, int index)
 {
     int j, k;
@@ -97,7 +131,6 @@ void CalcIG(SubSet set[], int i, int index)
     }
 
     Nf = size_ind - Yf;
-
     for ( j = 0; j < size_vet; j++)
     {
         SumFalse[j] = size_ind - SumTrue[j];
@@ -145,11 +178,32 @@ void CalcIG(SubSet set[], int i, int index)
     ///////////////////////////////////////////////////////// Information Gain /////////////////////////////////////////////////////////
     double GI[size_vet] = {0};
 
-    set[i].IG[index].IG_SepalLength = EntropyF - ( ( WeightRight[0] * entropyRight[0]) + ( WeightLeft[0] * entropyLeft[0]));
-    set[i].IG[index].IG_SepalWidth = EntropyF - ( ( WeightRight[1] * entropyRight[1]) + ( WeightLeft[1] * entropyLeft[1]));
-    set[i].IG[index].IG_PetalLength = EntropyF - ( ( WeightRight[2] * entropyRight[2]) + ( WeightLeft[2] * entropyLeft[2]));
-    set[i].IG[index].IG_PetalWidth = EntropyF - ( ( WeightRight[3] * entropyRight[3]) + ( WeightLeft[3] * entropyLeft[3]));
+    for ( j = 0; j < size_vet; j++)
+    {
+        set[i].IG[index].IG_vet[j] = EntropyF - ( ( WeightRight[j] * entropyRight[j]) + ( WeightLeft[j] * entropyLeft[j]));    
+    }
     
+
+    // set[i].IG[index].IG_SepalLength = EntropyF - ( ( WeightRight[0] * entropyRight[0]) + ( WeightLeft[0] * entropyLeft[0]));
+    // set[i].IG[index].IG_SepalWidth = EntropyF - ( ( WeightRight[1] * entropyRight[1]) + ( WeightLeft[1] * entropyLeft[1]));
+    // set[i].IG[index].IG_PetalLength = EntropyF - ( ( WeightRight[2] * entropyRight[2]) + ( WeightLeft[2] * entropyLeft[2]));
+    // set[i].IG[index].IG_PetalWidth = EntropyF - ( ( WeightRight[3] * entropyRight[3]) + ( WeightLeft[3] * entropyLeft[3]));
+    
+    /*
+        stack overflow
+    */
+
+    // if ( i < size_group - 1)
+    // {
+    //     CalcIG(set, i + 1, index);
+    // }
+    // else
+    // {
+    //     if ( i == size_group - 1 && index < size_plant)
+    //     {
+    //         CalcIG(set, i + 1 - size_group, index + 1);
+    //     }
+    // }
 }
 
 void CalcFeatures(SubSet set[])
@@ -164,11 +218,6 @@ void CalcFeatures(SubSet set[])
         {
             set[i].No[j].feature.SepalArea = set[i].No[j].SepalLength * set[i].No[j].SepalWidth;
             set[i].No[j].feature.PetalArea = set[i].No[j].PetalLength * set[i].No[j].PetalWidth;
-            if ( set[i].No[j].Ffeature[k])
-            {
-                /* code */
-            }
-            
             if ( set[i].No[j].SepalLength > mean[0][i]) set[i].No[j].feature.SepalLengthAboveMean = true;
             else set[i].No[j].feature.SepalLengthAboveMean = false;
             if ( set[i].No[j].SepalWidth > mean[1][i]) set[i].No[j].feature.SepalWidthAboveMean = true;
@@ -191,15 +240,10 @@ void CalcMean(SubSet set[], double mean[size_vet][size_group])
     {
         for ( j = 0; j < size_ind; j++)
         {
-            for ( k = 0; k < size_vet; k++)
-            {
-            }
-            sum[i] = sum[i] + set[i].No[j].Length_Width[k];
-            
-            // sum[0] = sum[0] + set[i].No[j].SepalLength;
-            // sum[1] = sum[1] + set[i].No[j].SepalWidth;
-            // sum[2] = sum[2] + set[i].No[j].PetalLength;
-            // sum[3] = sum[3] + set[i].No[j].PetalWidth;
+            sum[0] = sum[0] + set[i].No[j].SepalLength;
+            sum[1] = sum[1] + set[i].No[j].SepalWidth;
+            sum[2] = sum[2] + set[i].No[j].PetalLength;
+            sum[3] = sum[3] + set[i].No[j].PetalWidth;
             //printf("%lf %lf %lf %lf\n", set[i].No[j].SepalLength, set[i].No[j].SepalWidth, set[i].No[j].PetalLength, set[i].No[j].PetalWidth);
         }
         mean[0][i] = sum[0] / size_ind;
@@ -208,7 +252,7 @@ void CalcMean(SubSet set[], double mean[size_vet][size_group])
         mean[3][i] = sum[3] / size_ind;
 
         for ( j = -1; j < size_vet; j++, sum[j] = 0);
-        //printf("%lf %lf %lf %lf\n", mean[0][i] , mean[1][i] , mean[2][i] , mean[3][i] );
+        //printf("media %lf %lf %lf %lf\n", mean[0][i] , mean[1][i] , mean[2][i] , mean[3][i] );
     }
 }
 
@@ -223,7 +267,6 @@ void input(SubSet set[])
         {
             for ( j = 0; j < size_ind; j++)
             {
-                fscanf(file, "%lf %lf %lf %lf %s", &set[i].No[j].Length_Width[0], &set[i].No[j].Length_Width[1], &set[i].No[j].Length_Width[2], &set[i].No[j].Length_Width[3], set[i].No[j].Class);
                 fscanf(file, "%lf %lf %lf %lf %s", &set[i].No[j].SepalLength, &set[i].No[j].SepalWidth, &set[i].No[j].PetalLength, &set[i].No[j].PetalWidth, set[i].No[j].Class);
                 if (strcmp(set[i].No[j].Class, "Iris-setosa") == 0)set[i].No[j].index = 0;
                 else if (strcmp(set[i].No[j].Class, "Iris-versicolor") == 0)set[i].No[j].index = 1;
