@@ -17,6 +17,7 @@ struct features
 
 struct InformationGain
 {
+    double IIG[size_vet]; // , IG_SepalLength , IG_SepalWidth , IG_PetalLength , IG_PetalWidth 
     double IG_SepalLength;
     double IG_SepalWidth;
     double IG_PetalLength;
@@ -32,6 +33,8 @@ struct nodo
     char Class[50];
     int index;                  // index 0 = Iris-setosa 1 = Iris-versicolor 2 = Iris-virginica
     Features feature;
+    double Length_Width[size_vet];
+    bool Ffeature[size_vet] //SepalLengthAboveMean ,SepalWidthAboveMean ,PetalLengthAboveMean ,PetalWidthAboveMean
 };
 
 struct subset
@@ -154,13 +157,18 @@ void CalcFeatures(SubSet set[])
 
     double mean[size_vet][size_group];
     CalcMean(set, mean);
-    int i, j;
+    int i, j, k;
     for ( i = 0; i < size_pop / size_ind; i++)
     {
         for ( j = 0; j < size_ind; j++)
         {
             set[i].No[j].feature.SepalArea = set[i].No[j].SepalLength * set[i].No[j].SepalWidth;
             set[i].No[j].feature.PetalArea = set[i].No[j].PetalLength * set[i].No[j].PetalWidth;
+            if ( set[i].No[j].Ffeature[k])
+            {
+                /* code */
+            }
+            
             if ( set[i].No[j].SepalLength > mean[0][i]) set[i].No[j].feature.SepalLengthAboveMean = true;
             else set[i].No[j].feature.SepalLengthAboveMean = false;
             if ( set[i].No[j].SepalWidth > mean[1][i]) set[i].No[j].feature.SepalWidthAboveMean = true;
@@ -176,17 +184,22 @@ void CalcFeatures(SubSet set[])
 
 void CalcMean(SubSet set[], double mean[size_vet][size_group])
 {
-    int i, j;
+    int i, j, k;
     double sum[size_vet] = {0};
     // [0]SepalLengthMean [1]SepalWidthMean [2]PetalLengthMean [3]PetalWidthMean
     for ( i = 0; i < size_pop / size_ind; i++)
     {
         for ( j = 0; j < size_ind; j++)
         {
-            sum[0] = sum[0] + set[i].No[j].SepalLength;
-            sum[1] = sum[1] + set[i].No[j].SepalWidth;
-            sum[2] = sum[2] + set[i].No[j].PetalLength;
-            sum[3] = sum[3] + set[i].No[j].PetalWidth;
+            for ( k = 0; k < size_vet; k++)
+            {
+            }
+            sum[i] = sum[i] + set[i].No[j].Length_Width[k];
+            
+            // sum[0] = sum[0] + set[i].No[j].SepalLength;
+            // sum[1] = sum[1] + set[i].No[j].SepalWidth;
+            // sum[2] = sum[2] + set[i].No[j].PetalLength;
+            // sum[3] = sum[3] + set[i].No[j].PetalWidth;
             //printf("%lf %lf %lf %lf\n", set[i].No[j].SepalLength, set[i].No[j].SepalWidth, set[i].No[j].PetalLength, set[i].No[j].PetalWidth);
         }
         mean[0][i] = sum[0] / size_ind;
@@ -210,6 +223,7 @@ void input(SubSet set[])
         {
             for ( j = 0; j < size_ind; j++)
             {
+                fscanf(file, "%lf %lf %lf %lf %s", &set[i].No[j].Length_Width[0], &set[i].No[j].Length_Width[1], &set[i].No[j].Length_Width[2], &set[i].No[j].Length_Width[3], set[i].No[j].Class);
                 fscanf(file, "%lf %lf %lf %lf %s", &set[i].No[j].SepalLength, &set[i].No[j].SepalWidth, &set[i].No[j].PetalLength, &set[i].No[j].PetalWidth, set[i].No[j].Class);
                 if (strcmp(set[i].No[j].Class, "Iris-setosa") == 0)set[i].No[j].index = 0;
                 else if (strcmp(set[i].No[j].Class, "Iris-versicolor") == 0)set[i].No[j].index = 1;
