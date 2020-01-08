@@ -13,6 +13,7 @@ struct features
     bool SepalWidthAboveMean;
     bool PetalLengthAboveMean;
     bool PetalWidthAboveMean;
+    bool F_vet[size_vet];
 };
 
 struct InformationGain
@@ -89,6 +90,8 @@ int main(int argc, char const *argv[])
     //     }
     // }
 
+    // CrossValidation(set, i);
+
     for ( i = 0; i < size_group; i++)
     {
         CrossValidation(set, i);
@@ -103,7 +106,7 @@ void CrossValidation(SubSet set[], int i)
 
     int j, k, index;
     double maior[size_plant] = {0};
-    int plant[size_plant] = {0};
+    int plant[size_plant] = {0}, features_chosen[size_plant] = {0};
 
     for ( index = 0; index < size_plant; index++)
     {
@@ -113,32 +116,52 @@ void CrossValidation(SubSet set[], int i)
             {
                 maior[index] = set[i].IG[index].IG_vet[j];
                 plant[index] = index;
+                features_chosen[index] = j;
             }
             if ( set[i].IG[index].IG_vet[j] > maior[index])
             {
                 maior[index] = set[i].IG[index].IG_vet[j];
                 plant[index] = index;
+                features_chosen[index] = j;
             }
         }
     }
     
+    int size = size_plant;  
+    SelectionSort( maior, plant, size);
+
     for ( j = 0; j < size_plant; j++)
     {
-        printf("%lf | index -> %i | group -> %i\n", maior[j], plant[j],i);
+        printf("%lf | index -> %i | group -> %i | features chosen -> %i \n", maior[j], plant[j], i, features_chosen[j]);
     }
 
-    int size = size_plant;  
+    // numero aleatorio 0 a 24 -> grupo 0 - numero aleatorio 0 a 5 -> 0
 
-    //SelectionSort( maior, plant, size);
+    // for ( j = 0; j < size_plant; j++)
+    // {
+    //     if ( set[1].No[0].feature.F_vet[features_chosen[j]] == )
+    //     {
 
+    //     }
+    //     else
+    //     {
+
+    //         continue;
+    //     }
+    //     if ()
+    //     {
+
+    //     }
+    // }
+    
 }
 
 void SelectionSort( double v[], int plant[], int size)
 {
 	int i = 0, j = 0;
     for ( i = 0; i < size - 1; i++){
-        for ( j = i; j < size; j++){
-            if ( v[i] > v[j]){
+        for ( j = i + 1; j < size; j++){
+            if ( v[i] < v[j]){
                 swap( v, plant, i, j);
             }
         }
@@ -147,11 +170,11 @@ void SelectionSort( double v[], int plant[], int size)
 
 void swap( double v[], int plant[], int i, int j)
 {
-    long aux_v = v[i];
+    double aux_v = v[i];
     v[i] = v[j];
     v[j] = aux_v;
 
-    long aux_plant = plant[i];
+    int aux_plant = plant[i];
     plant[i] = plant[j];
     plant[j] = aux_plant;
 }
