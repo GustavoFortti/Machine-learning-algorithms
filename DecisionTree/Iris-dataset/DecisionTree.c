@@ -21,7 +21,7 @@ struct InformationGain
     // double IG_SepalWidth;
     // double IG_PetalLength;
     // double IG_PetalWidth;
-    double IG_vet[4];
+    double IG_vet[size_vet];
 };
 
 struct nodo
@@ -33,8 +33,6 @@ struct nodo
     char Class[50];
     int index;                  // index 0 = Iris-setosa 1 = Iris-versicolor 2 = Iris-virginica
     Features feature;
-    //double Length_Width[size_vet];
-    //bool Ffeature[size_vet] //SepalLengthAboveMean ,SepalWidthAboveMean ,PetalLengthAboveMean ,PetalWidthAboveMean
 };
 
 struct subset
@@ -50,12 +48,12 @@ int main(int argc, char const *argv[])
     input(set);
 
     /*
-    # Iris-setosa
-    sample1 = [1.0, 2.0, 3.5, 1.0, 10.0, 3.5, False, False, False, False]
-    # Iris-versicolor
-    sample2 = [5.0, 3.5, 1.3, 0.2, 17.8, 0.2, False, True, False, False]
-    # Iris-virginica
-    sample3 = [7.9, 5.0, 2.0, 1.8, 19.7, 9.1, True, False, True, True]
+        # Iris-setosa
+        sample1 = [1.0, 2.0, 3.5, 1.0, 10.0, 3.5, False, False, False, False]
+        # Iris-versicolor
+        sample2 = [5.0, 3.5, 1.3, 0.2, 17.8, 0.2, False, True, False, False]
+        # Iris-virginica
+        sample3 = [7.9, 5.0, 2.0, 1.8, 19.7, 9.1, True, False, True, True]
     */
 
     CalcFeatures(set);
@@ -91,19 +89,71 @@ int main(int argc, char const *argv[])
     //     }
     // }
 
-    CrossValidation(set, i, index, block);
+    for ( i = 0; i < size_group; i++)
+    {
+        CrossValidation(set, i);
+    }
     
     return 0;
 }
 
 
-void CrossValidation(SubSet set[], int i, int index, int block)
+void CrossValidation(SubSet set[], int i)
 {
-    //score
-    int j;
-    double maior[size_plant];
-    double IG_aux[size_vet][size_plant];
 
+    int j, k, index;
+    double maior[size_plant] = {0};
+    int plant[size_plant] = {0};
+
+    for ( index = 0; index < size_plant; index++)
+    {
+        for ( j = 0; j < size_plant; j++)
+        {
+            if ( j == 0)
+            {
+                maior[index] = set[i].IG[index].IG_vet[j];
+                plant[index] = index;
+            }
+            if ( set[i].IG[index].IG_vet[j] > maior[index])
+            {
+                maior[index] = set[i].IG[index].IG_vet[j];
+                plant[index] = index;
+            }
+        }
+    }
+    
+    for ( j = 0; j < size_plant; j++)
+    {
+        printf("%lf | index -> %i | group -> %i\n", maior[j], plant[j],i);
+    }
+
+    int size = size_plant;  
+
+    //SelectionSort( maior, plant, size);
+
+}
+
+void SelectionSort( double v[], int plant[], int size)
+{
+	int i = 0, j = 0;
+    for ( i = 0; i < size - 1; i++){
+        for ( j = i; j < size; j++){
+            if ( v[i] > v[j]){
+                swap( v, plant, i, j);
+            }
+        }
+    }
+}
+
+void swap( double v[], int plant[], int i, int j)
+{
+    long aux_v = v[i];
+    v[i] = v[j];
+    v[j] = aux_v;
+
+    long aux_plant = plant[i];
+    plant[i] = plant[j];
+    plant[j] = aux_plant;
 }
 
 void CalcIG(SubSet set[], int i, int index)
@@ -192,7 +242,6 @@ void CalcIG(SubSet set[], int i, int index)
     /*
         stack overflow
     */
-
     // if ( i < size_group - 1)
     // {
     //     CalcIG(set, i + 1, index);
@@ -208,7 +257,6 @@ void CalcIG(SubSet set[], int i, int index)
 
 void CalcFeatures(SubSet set[])
 {
-
     double mean[size_vet][size_group];
     CalcMean(set, mean);
     int i, j, k;
