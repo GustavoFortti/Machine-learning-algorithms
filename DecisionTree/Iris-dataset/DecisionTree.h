@@ -13,10 +13,10 @@ typedef struct subset SubSet;
 typedef struct InformationGain InfoGain;
 
 void input(SubSet set[]);
-void CalcFeatures(SubSet set[]);
-void CalcMean(SubSet set[], double mean[size_vet][size_group]);
+void CalcFeatures(SubSet set[], int i, int index);
+void CalcMean(SubSet set[], double mean[size_vet], int i, int index);
 void CalcIG(SubSet set[], int i, int index);
-void CrossValidation(SubSet set[], int i);
+void CrossValidation(SubSet set[], int i, int index);
 void SelectionSort(SubSet set[], double v[], int aux, int plant[], int features_chosen[], int size);
 void swap(SubSet set[], double v[], int aux, int plant[], int features_chosen[], int i, int j);
 
