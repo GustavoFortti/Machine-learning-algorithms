@@ -17,7 +17,7 @@ void CalcFeatures(SubSet set[]);
 void CalcMean(SubSet set[], double mean[size_vet][size_group]);
 void CalcIG(SubSet set[], int i, int index);
 void CrossValidation(SubSet set[], int i);
-void SelectionSort( double v[], int plant[], int size);
-void swap( double v[], int plant[], int i, int j);
+void SelectionSort(SubSet set[], double v[], int plant[], int features_chosen[], int size);
+void swap(SubSet set[], double v[], int plant[], int features_chosen[], int i, int j);
 
 #endif
