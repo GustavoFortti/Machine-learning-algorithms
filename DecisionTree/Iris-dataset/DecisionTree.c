@@ -47,17 +47,17 @@ int main(int argc, char const *argv[])
         sample3 = [7.9, 5.0, 2.0, 1.8, 19.7, 9.1, True, False, True, True]
     */
 
-    CalcFeatures(set);
+    // CalcFeatures(set);
 
     int i, index, block, k, j;
 
-    for ( index = 0; index < size_plant; index++)
-    {
-        for ( i = 0; i < size_group; i++)
-        {
-            CalcIG(set, i, index);
-        }
-    }
+    // for ( index = 0; index < size_plant; index++)
+    // {
+    //     for ( i = 0; i < size_group; i++)
+    //     {
+    //         CalcIG(set, i, index);
+    //     }
+    // }
     
     // for ( i = 0; i < size_group; i++)
     // {
@@ -71,19 +71,35 @@ int main(int argc, char const *argv[])
     //     }
     // }
 
-    for ( i = 0; i < size_group; i++)
-    {
-        CrossValidation(set, i);
-    }
+    // for ( i = 0; i < size_group; i++)
+    // {
+    //     CrossValidation(set, i);
+    // }
+
+    i = rand() % 24;
+    index = rand() % 5;
+
+    CrossValidation(set, i, index);
     
     return 0;
 }
 
 
-void CrossValidation(SubSet set[], int i)
+void CrossValidation(SubSet set[], int i, int index)
 {
 
-    int j, k, index;
+    CalcFeatures(set, i, index);
+
+    int k, j;
+
+    for ( index = 0; index < size_plant; index++)
+    {
+        for ( i = 0; i < size_group; i++)
+        {
+            CalcIG(set, i, index);
+        }
+    }
+
     double maior[size_plant] = {0};
     int plant[size_plant] = {0}, features_chosen[size_plant] = {0};
 
@@ -260,44 +276,42 @@ void CalcIG(SubSet set[], int i, int index)
     // }
 }
 
-void CalcFeatures(SubSet set[])
+void CalcFeatures(SubSet set[], int i, int index)
 {
-    double mean[size_vet][size_group];
-    CalcMean(set, mean);
-    int i, j, k;
-    for ( i = 0; i < size_pop / size_ind; i++)
+    double mean[size_vet];
+    CalcMean(set, mean, i, index);
+    int j, k;
+    for ( j = 0; j < size_ind; j++)
     {
-        for ( j = 0; j < size_ind; j++)
+        set[i].No[j].feature.SepalArea = set[i].No[j].SepalAndPetal[0] * set[i].No[j].SepalAndPetal[1];
+        set[i].No[j].feature.PetalArea = set[i].No[j].SepalAndPetal[2] * set[i].No[j].SepalAndPetal[3];
+        for ( k = 0; k < size_vet; k++)
         {
-            for ( k = 0; k < size_vet; k++)
-            {
-                if ( set[i].No[j].SepalAndPetal[k] > mean[k][i]) set[i].No[j].feature.F_vet[k] = true;
-                else set[i].No[j].feature.F_vet[k] = false;
-            }
-            // printf("group => %i \t- %0.2lf | %0.2lf | %0.2lf | %0.2lf | %s\t => %i | %0.2lf | %0.2lf\t|\t %d %d %d %d\n", i,set[i].No[j].SepalLength, set[i].No[j].SepalWidth, set[i].No[j].PetalLength, set[i].No[j].PetalWidth, set[i].No[j].Class, set[i].No[j].index, set[i].No[j].feature.SepalArea,  set[i].No[j].feature.PetalArea, set[i].No[j].feature.F_vet[0], set[i].No[j].feature.F_vet[1], set[i].No[j].feature.F_vet[2], set[i].No[j].feature.F_vet[3] );
+            if ( set[i].No[j].SepalAndPetal[k] > mean[k]) set[i].No[j].feature.F_vet[k] = true;
+            else set[i].No[j].feature.F_vet[k] = false;
         }
+        // printf("group => %i - rand = %i \t- %0.2lf | %0.2lf | %0.2lf | %0.2lf | %s\t => %i | %0.2lf | %0.2lf\t|\t %d %d %d %d\n", i, (j == index), set[i].No[j].SepalAndPetal[0], set[i].No[j].SepalAndPetal[1], set[i].No[j].SepalAndPetal[2], set[i].No[j].SepalAndPetal[3], set[i].No[j].Class, set[i].No[j].index, set[i].No[j].feature.SepalArea,  set[i].No[j].feature.PetalArea, set[i].No[j].feature.F_vet[0], set[i].No[j].feature.F_vet[1], set[i].No[j].feature.F_vet[2], set[i].No[j].feature.F_vet[3] );
     }
 }
 
-void CalcMean(SubSet set[], double mean[size_vet][size_group])
+void CalcMean(SubSet set[], double mean[size_vet], int i, int index)
 {
-    int i, j, k;
+    int j, k;
     double sum[size_vet] = {0};
     // [0]SepalLengthMean [1]SepalWidthMean [2]PetalLengthMean [3]PetalWidthMean
-    for ( i = 0; i < size_pop / size_ind; i++)
+    for ( j = 0; j < size_ind; j++)
     {
-        for ( j = 0; j < size_ind; j++)
+        if ( j != index)
         {
             for ( k = 0; k < size_vet; k++)
             {
                 sum[k] = sum[k] + set[i].No[j].SepalAndPetal[k];
             }
         }
-        for ( j = 0; j < size_vet; j++)
-        {
-            mean[j][i] = sum[j] / size_ind;
-        }
-        for ( j = -1; j < size_vet; j++, sum[j] = 0);
+    }
+    for ( j = 0; j < size_vet; j++)
+    {
+        mean[j] = sum[j] / size_ind;
     }
 }
 
