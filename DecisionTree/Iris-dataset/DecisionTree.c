@@ -49,7 +49,7 @@ int main(int argc, char const *argv[])
 
     // CalcFeatures(set);
 
-    int i, index, block, k, j;
+    int i, index, k, j;
 
     // for ( index = 0; index < size_plant; index++)
     // {
@@ -59,21 +59,16 @@ int main(int argc, char const *argv[])
     //     }
     // }
     
-    // for ( i = 0; i < size_group; i++)
-    // {
-    //     for ( index = 0; index < size_plant; index++)
-    //     {
-    //         for ( k = 0; k < size_vet; k++)
-    //         {
-    //             printf("%lf ", set[i].IG[index].IG_vet[k]);
-    //         }
-    //         printf(" | index -> %i | group -> %i\n", index, i);
-    //     }
-    // }
+
 
     // for ( i = 0; i < size_group; i++)
     // {
-    //     CrossValidation(set, i);
+    //     for ( index = 0; index < size_ind; index++)
+    //     {
+    //         /* code */
+    //         CrossValidation(set, i, index);
+    //     }
+        
     // }
 
     i = rand() % 24;
@@ -81,6 +76,8 @@ int main(int argc, char const *argv[])
 
     CrossValidation(set, i, index);
     
+
+
     return 0;
 }
 
@@ -89,16 +86,21 @@ void CrossValidation(SubSet set[], int i, int index)
 {
 
     CalcFeatures(set, i, index);
-
+    // FUNCIONANDO ATÉ AQUI
     int k, j;
+    int block_index = index;
 
     for ( index = 0; index < size_plant; index++)
     {
-        for ( i = 0; i < size_group; i++)
+        CalcIG(set, i, index, block_index);
+        for ( k = 0; k < size_vet; k++)
         {
-            CalcIG(set, i, index);
+            printf("%lf ", set[i].IG[index].IG_vet[k]);
         }
+        printf(" \t|\t index -> %i |\t group -> %i\n", index, i);
+        printf("\n");
     }
+    
 
     double maior[size_plant] = {0};
     int plant[size_plant] = {0}, features_chosen[size_plant] = {0};
@@ -188,7 +190,7 @@ void swap(SubSet set[], double v[], int aux, int plant[], int features_chosen[],
     // features_chosen[j] = aux_features_chosen;
 }
 
-void CalcIG(SubSet set[], int i, int index)
+void CalcIG(SubSet set[], int i, int index, int block_index)
 {
     int j, k;
     ///////////////////////////////////////////////////////// ENTROPY /////////////////////////////////////////////////////////
@@ -201,22 +203,38 @@ void CalcIG(SubSet set[], int i, int index)
 
     for ( j = 0; j < size_ind; j++)
     {   
-        if ( set[i].No[j].index == index) Yf++;
-        for ( k = 0; k < size_vet; k++)
+        if ( set[i].No[j].index == index && block_index != j) Yf++;
+        if ( block_index != j)
         {
-            if ( set[i].No[j].feature.F_vet[k] == true) SumTrue[k]++;
-            if ( set[i].No[j].index == index && set[i].No[j].feature.F_vet[k] == true) Ly[k]++;
+            for ( k = 0; k < size_vet; k++)
+            {
+                if ( set[i].No[j].feature.F_vet[k] == true) SumTrue[k]++;
+                if ( set[i].No[j].index == index && set[i].No[j].feature.F_vet[k] == true) Ly[k]++;
+            }
         }
     }
+    int size_ind_aux = size_ind - 1;
 
-    Nf = size_ind - Yf;
+    Nf = size_ind_aux - Yf;
+
     for ( j = 0; j < size_vet; j++)
     {
-        SumFalse[j] = size_ind - SumTrue[j];
+        SumFalse[j] = size_ind_aux - SumTrue[j];
         Ln[j] = SumTrue[j] - Ly[j];
         Ry[j] = Yf - Ly[j];
+        printf("Ln %i = sumTRUE -> %i - Ly -> %i\n", Ln[j], SumTrue[j], Ly[j]);
+        printf("Ry = %i -> %i - Ly -> %i  \n", Ry[j] , Yf , Ly[j]);
     }
-    for ( j = -1; j < size_vet; j++, Rn[j] = SumFalse[j] - Ry[j]);
+    // printf("%i %i\n", Yf, Nf);
+    for ( j = -1; j < size_vet; j++)
+    {
+        Rn[j] = SumFalse[j] - Ry[j];
+        printf("Rn %i =  SumFalse = %i  -  Ry %i\n", Rn[j], SumFalse[j], Ry[j]);
+    }
+    for ( j = 0; j < size_vet; j++)
+    {
+        // printf("%i %i %i %i %i %i\n", SumTrue[j], SumFalse[j], Ly[j], Ln[j], Ry[j], Rn[j]);
+    }
 
     double entropyRight[size_vet] = {0};
     double PyRight[size_vet] = {0};
@@ -230,18 +248,26 @@ void CalcIG(SubSet set[], int i, int index)
     {
         PyRight[j] = Ry[j] * 1.0 / (SumFalse[j] * 1.0);
         PnRight[j] = Rn[j] * 1.0 / (SumFalse[j] * 1.0);
+        if (SumFalse[j] == 0) PyRight[j] = 0, PnRight[j] = 0;
         entropyRight[j] = - ( PyRight[j] * log2(PyRight[j]) + PnRight[j] * log2(PnRight[j]));
         if (PyRight[j] == 0 || PnRight[j] == 0) entropyRight[j] = 0;
         PyLeft[j] = Ly[j] * 1.0 / (SumTrue[j] * 1.0);
         PnLeft[j] = Ln[j] * 1.0 / (SumTrue[j] * 1.0);
+        if (SumTrue[j] == 0) PyLeft[j] = 0, PnLeft[j] = 0;
         entropyLeft[j] = - ( PyLeft[j] * log2(PyLeft[j]) + PnLeft[j] * log2(PnLeft[j]));
         if (PyLeft[j] == 0 || PnLeft[j] == 0) entropyLeft[j] = 0;
+        printf("Ly      \t%i  \t\tLn       \t%i \n", Ly[j], Ln[j]);
+        printf("PyLeft  \t%lf \tPnLeft  \t%lf \n", PyLeft[j], PnLeft[j]);
+        printf("Ry      \t%i  \t\tRn       \t%i \n", Ry[j], Rn[j]);
+        printf("PyRight \t%lf \tPnRight \t%lf \n", PyRight[j], PnRight[j]);
+        printf("SumTrue \t%i \t\tSumFalse \t%i \n\n", SumTrue[j], SumFalse[j]);
+        printf("entropyLeft \t%lf \tentropyRight \t%lf \n\n", entropyLeft[j], entropyRight[j]);
     }
     
     //EntropyFhater
     double PYF = 0, PNF = 0, EntropyF = 0;
-    PYF = Yf * 1.0 / (size_ind * 1.0);
-    PNF = Nf * 1.0 / (size_ind * 1.0);
+    PYF = Yf * 1.0 / (size_ind_aux * 1.0);
+    PNF = Nf * 1.0 / (size_ind_aux * 1.0);
     EntropyF = - ( PYF * log2(PYF) + PNF * log2(PNF));
     if (PYF == 0 || PNF == 0) EntropyF = 0;
 
@@ -249,14 +275,15 @@ void CalcIG(SubSet set[], int i, int index)
     double WeightLeft[size_vet] = {0}, WeightRight[size_vet] = {0};
     for ( j = -1; j < size_vet; j++)
     {
-        WeightLeft[j] = SumTrue[j] * 1.0 / size_ind;
-        WeightRight[j] = SumFalse[j] * 1.0 / size_ind;
+        WeightLeft[j] = SumTrue[j] * 1.0 / size_ind_aux;
+        WeightRight[j] = SumFalse[j] * 1.0 / size_ind_aux;
     }
-
     ///////////////////////////////////////////////////////// Information Gain /////////////////////////////////////////////////////////
     double GI[size_vet] = {0};
     for ( j = 0; j < size_vet; j++)
     {
+        printf("%lf %lf %lf %lf %lf\n", EntropyF, WeightRight[j], entropyRight[j], WeightLeft[j] ,entropyLeft[j]);
+        printf("%lf\n", EntropyF - ( ( WeightRight[j] * entropyRight[j]) + ( WeightLeft[j] * entropyLeft[j])));
         set[i].IG[index].IG_vet[j] = EntropyF - ( ( WeightRight[j] * entropyRight[j]) + ( WeightLeft[j] * entropyLeft[j]));    
     }
     
@@ -290,7 +317,7 @@ void CalcFeatures(SubSet set[], int i, int index)
             if ( set[i].No[j].SepalAndPetal[k] > mean[k]) set[i].No[j].feature.F_vet[k] = true;
             else set[i].No[j].feature.F_vet[k] = false;
         }
-        // printf("group => %i - rand = %i \t- %0.2lf | %0.2lf | %0.2lf | %0.2lf | %s\t => %i | %0.2lf | %0.2lf\t|\t %d %d %d %d\n", i, (j == index), set[i].No[j].SepalAndPetal[0], set[i].No[j].SepalAndPetal[1], set[i].No[j].SepalAndPetal[2], set[i].No[j].SepalAndPetal[3], set[i].No[j].Class, set[i].No[j].index, set[i].No[j].feature.SepalArea,  set[i].No[j].feature.PetalArea, set[i].No[j].feature.F_vet[0], set[i].No[j].feature.F_vet[1], set[i].No[j].feature.F_vet[2], set[i].No[j].feature.F_vet[3] );
+        printf("group => %i - block = %i \t- %0.2lf | %0.2lf | %0.2lf | %0.2lf | %s\t => %i | %0.2lf | %0.2lf\t|\t %d %d %d %d\n", i, (j == index), set[i].No[j].SepalAndPetal[0], set[i].No[j].SepalAndPetal[1], set[i].No[j].SepalAndPetal[2], set[i].No[j].SepalAndPetal[3], set[i].No[j].Class, set[i].No[j].index, set[i].No[j].feature.SepalArea,  set[i].No[j].feature.PetalArea, set[i].No[j].feature.F_vet[0], set[i].No[j].feature.F_vet[1], set[i].No[j].feature.F_vet[2], set[i].No[j].feature.F_vet[3] );
     }
 }
 
