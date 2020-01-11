@@ -32,6 +32,8 @@ struct subset
     bool IG_bool[size_plant];
 };
 
+int a = 0, e = 0;
+
 int main(int argc, char const *argv[])
 {
     SubSet set[size_pop / size_ind];
@@ -66,7 +68,6 @@ int main(int argc, char const *argv[])
             /* code */
             CrossValidation(set, i, index);
         }
-        
     }
 
     // i = rand() % 24;
@@ -74,7 +75,7 @@ int main(int argc, char const *argv[])
 
     // CrossValidation(set, i, index);
     
-
+    printf("Acertos = %i\nErros = %i\n", a, e);
 
     return 0;
 }
@@ -87,16 +88,19 @@ void CrossValidation(SubSet set[], int i, int index)
     int k, j;
     int block_index = index;
 
+    bool cross_resp[size_vet];
+    int index_resp;
+    char str_resp[20];
+
     for ( index = 0; index < size_plant; index++)
     {
         CalcIG(set, i, index, block_index);
-        for ( k = 0; k < size_vet; k++)
-        {
-            printf("%lf ", set[i].IG[index].IG_vet[k]);
-        }
-        printf(" \t|\t index -> %i |\t group -> %i\n", index, i);
+        // for ( k = 0; k < size_vet; k++)
+        // {
+        //     printf("%lf ", set[i].IG[index].IG_vet[k]);
+        // }
+        // printf(" \t|\t index -> %i |\t group -> %i\n", index, i);
     }
-    // FUNCIONANDO ATÉ AQUI
 
     double maior[size_plant] = {0};
     int plant[size_plant] = {0}, features_chosen[size_plant] = {0};
@@ -134,25 +138,31 @@ void CrossValidation(SubSet set[], int i, int index)
     //     printf("\n");
     // }
 
+
+    // Analise
+    for ( j = 0; j < size_vet; j++)
+    {
+        cross_resp[j] = set[i].No[block_index].feature.F_vet[j];
+    }
+    // RESPOSTA
+    index_resp = set[i].No[block_index].index;
+    strcpy(str_resp, set[i].No[block_index].Class);
+
+    int resp = -1;
     // numero aleatorio 0 a 24 -> grupo 0 - numero aleatorio 0 a 5 -> 0
 
-    // for ( j = 0; j < size_plant; j++)
-    // {
-    //     if ( set[1].No[0].feature.F_vet[features_chosen[j]] == )
-    //     {
-
-    //     }
-    //     else
-    //     {
-
-    //         continue;
-    //     }
-    //     if ()
-    //     {
-
-    //     }
-    // }
-    
+    for ( j = 0; j < size_plant; j++)
+    {
+        // printf(" %i  %i\n", set[i].No[block_index].feature.F_vet[features_chosen[j]], set[i].IG_bool[j]);
+        if ( set[i].No[block_index].feature.F_vet[features_chosen[j]] == set[i].IG_bool[j])
+        {
+            resp = plant[j];
+            break;
+        }
+    }
+    if ( resp == -1) resp = plant[size_plant - 1];
+    if ( resp == index_resp) a++;
+    else e++;
 }
 
 void SelectionSort(SubSet set[], double v[], int aux, int plant[], int features_chosen[], int size)
