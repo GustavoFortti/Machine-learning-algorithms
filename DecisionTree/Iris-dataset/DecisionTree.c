@@ -33,6 +33,7 @@ struct subset
 };
 
 int a = 0, e = 0;
+int SE = 0, VIR = 0, VER = 0;
 
 int main(int argc, char const *argv[])
 {
@@ -49,37 +50,25 @@ int main(int argc, char const *argv[])
         sample3 = [7.9, 5.0, 2.0, 1.8, 19.7, 9.1, True, False, True, True]
     */
 
-    // CalcFeatures(set);
-
     int i, index, k, j;
-
-    // for ( index = 0; index < size_plant; index++)
-    // {
-    //     for ( i = 0; i < size_group; i++)
-    //     {
-    //         CalcIG(set, i, index);
-    //     }
-    // }
 
     for ( i = 0; i < size_group; i++)
     {
         for ( index = 0; index < size_ind; index++)
         {
-            /* code */
             CrossValidation(set, i, index);
         }
     }
 
     // i = rand() % 24;
     // index = rand() % 5;
-
     // CrossValidation(set, i, index);
     
     printf("Acertos = %i\nErros = %i\n", a, e);
 
+    // printf("Setosa %i - Versicolor %i - Virginica %i \n", SE, VER, VIR);
     return 0;
 }
-
 
 void CrossValidation(SubSet set[], int i, int index)
 {
@@ -128,15 +117,15 @@ void CrossValidation(SubSet set[], int i, int index)
     
     int size = size_plant;  
     SelectionSort( set, maior, i, plant, features_chosen, size);
-    // for ( j = 0; j < size_plant; j++)
-    // {
-    //     printf("Group -> %i \t| %lf -> %i | index -> %i | features chosen -> %i | ", i, maior[j], set[i].IG_bool[j], plant[j], features_chosen[j]);
-    //     for ( k = 0; k < size_vet; k++)
-    //     {
-    //         printf("%i ", set[i].No[j].feature.F_vet[k]);
-    //     }
-    //     printf("\n");
-    // }
+    for ( j = 0; j < size_plant; j++)
+    {
+        // printf("Group -> %i \t| %lf -> %i | index -> %i | features chosen -> %i | ", i, maior[j], set[i].IG_bool[j], plant[j], features_chosen[j]);
+        for ( k = 0; k < size_vet; k++)
+        {
+            // printf("%i ", set[i].No[j].feature.F_vet[k]);
+        }
+        // printf("\n");
+    }
 
 
     // Analise
@@ -156,6 +145,7 @@ void CrossValidation(SubSet set[], int i, int index)
         // printf(" %i  %i\n", set[i].No[block_index].feature.F_vet[features_chosen[j]], set[i].IG_bool[j]);
         if ( set[i].No[block_index].feature.F_vet[features_chosen[j]] == set[i].IG_bool[j])
         {
+            // printf("%i \n", plant[j]);
             resp = plant[j];
             break;
         }
@@ -163,6 +153,26 @@ void CrossValidation(SubSet set[], int i, int index)
     if ( resp == -1) resp = plant[size_plant - 1];
     if ( resp == index_resp) a++;
     else e++;
+
+    // if ( resp == index_resp) a++, printf("G-%i | Acerto \t->", i);
+    // else e++, printf("G-%i | Erro \t->", i);
+
+    // if ( resp == 0)
+    // {
+    //     printf(" \tSetosa\n");
+    //     SE++;
+    // }
+    // if ( resp == 1)
+    // {
+    //     printf(" \tVersicolor\n");
+    //     VER++;
+    // }
+    // if ( resp == 2)
+    // {
+    //     printf(" \tVirginica\n");
+    //     VIR++;
+    // }
+
 }
 
 void SelectionSort(SubSet set[], double v[], int aux, int plant[], int features_chosen[], int size)
