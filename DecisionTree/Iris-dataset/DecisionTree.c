@@ -5,11 +5,26 @@
 #include <math.h>
 #include "DecisionTree.h"
 
+/*
+    Algoritimo genetico
+
+    Quantidade de genes
+                  população
+                  cruzamentos
+    Gerações 
+    Probabilidade de mutção       -> 0 a 1
+    Probabilidade de cruzamento   -> 0 a 1
+
+*/
+
 struct features
 {
     double SepalArea;
     double PetalArea;
-    bool F_vet[size_vet];           //[0]SepalLength [1]SepalWidth [2]PetalLength [3]PetalWidth
+    bool pop_F[size_vet]; 
+    /* População - pop_F -> pop_F
+       [0]SepalLength [1]SepalWidth [2]PetalLength [3]PetalWidth
+    */
 };
 
 struct InformationGain
@@ -103,14 +118,14 @@ void CrossValidation(SubSet set[], int i, int index)
                 maior[index] = set[i].IG[index].IG_vet[j];
                 plant[index] = index;
                 features_chosen[index] = j;
-                set[i].IG_bool[index] = set[i].No[index].feature.F_vet[j];
+                set[i].IG_bool[index] = set[i].No[index].feature.pop_F[j];
             }
             if ( set[i].IG[index].IG_vet[j] > maior[index])
             {
                 maior[index] = set[i].IG[index].IG_vet[j];
                 plant[index] = index;
                 features_chosen[index] = j;
-                set[i].IG_bool[index] = set[i].No[index].feature.F_vet[j];
+                set[i].IG_bool[index] = set[i].No[index].feature.pop_F[j];
             }
         }
     }
@@ -122,16 +137,15 @@ void CrossValidation(SubSet set[], int i, int index)
         // printf("Group -> %i \t| %lf -> %i | index -> %i | features chosen -> %i | ", i, maior[j], set[i].IG_bool[j], plant[j], features_chosen[j]);
         for ( k = 0; k < size_vet; k++)
         {
-            // printf("%i ", set[i].No[j].feature.F_vet[k]);
+            // printf("%i ", set[i].No[j].feature.pop_F[k]);
         }
         // printf("\n");
     }
 
-
-    // Analise
+    // ANALISE
     for ( j = 0; j < size_vet; j++)
     {
-        cross_resp[j] = set[i].No[block_index].feature.F_vet[j];
+        cross_resp[j] = set[i].No[block_index].feature.pop_F[j];
     }
     // RESPOSTA
     index_resp = set[i].No[block_index].index;
@@ -142,8 +156,8 @@ void CrossValidation(SubSet set[], int i, int index)
 
     for ( j = 0; j < size_plant; j++)
     {
-        // printf(" %i  %i\n", set[i].No[block_index].feature.F_vet[features_chosen[j]], set[i].IG_bool[j]);
-        if ( set[i].No[block_index].feature.F_vet[features_chosen[j]] == set[i].IG_bool[j])
+        // printf(" %i  %i\n", set[i].No[block_index].feature.pop_F[features_chosen[j]], set[i].IG_bool[j]);
+        if ( set[i].No[block_index].feature.pop_F[features_chosen[j]] == set[i].IG_bool[j])
         {
             // printf("%i \n", plant[j]);
             resp = plant[j];
@@ -159,17 +173,17 @@ void CrossValidation(SubSet set[], int i, int index)
 
     // if ( resp == 0)
     // {
-    //     printf(" \tSetosa\n");
+    //     printf("R. = Iris-setosa\t- R. esperada = %s\n", str_resp);
     //     SE++;
     // }
     // if ( resp == 1)
     // {
-    //     printf(" \tVersicolor\n");
+    //     printf("R. = Iris-versicolor\t- R. esperada = %s\n", str_resp);
     //     VER++;
     // }
     // if ( resp == 2)
     // {
-    //     printf(" \tVirginica\n");
+    //     printf("R. = Iris-virginica\t- R. esperada = %s\n", str_resp);
     //     VIR++;
     // }
 
@@ -224,8 +238,8 @@ void CalcIG(SubSet set[], int i, int index, int block_index)
         {
             for ( k = 0; k < size_vet; k++)
             {
-                if ( set[i].No[j].feature.F_vet[k] == true) SumTrue[k]++;
-                if ( set[i].No[j].index == index && set[i].No[j].feature.F_vet[k] == true) Ly[k]++;
+                if ( set[i].No[j].feature.pop_F[k] == true) SumTrue[k]++;
+                if ( set[i].No[j].index == index && set[i].No[j].feature.pop_F[k] == true) Ly[k]++;
             }
         }
     }
@@ -286,21 +300,6 @@ void CalcIG(SubSet set[], int i, int index, int block_index)
     {
         set[i].IG[index].IG_vet[j] = EntropyF - ( ( WeightRight[j] * entropyRight[j]) + ( WeightLeft[j] * entropyLeft[j]));    
     }
-    
-    /*
-        stack overflow
-    */
-    // if ( i < size_group - 1)
-    // {
-    //     CalcIG(set, i + 1, index);
-    // }
-    // else
-    // {
-    //     if ( i == size_group - 1 && index < size_plant)
-    //     {
-    //         CalcIG(set, i + 1 - size_group, index + 1);
-    //     }
-    // }
 }
 
 void CalcFeatures(SubSet set[], int i, int index)
@@ -314,10 +313,10 @@ void CalcFeatures(SubSet set[], int i, int index)
         set[i].No[j].feature.PetalArea = set[i].No[j].SepalAndPetal[2] * set[i].No[j].SepalAndPetal[3];
         for ( k = 0; k < size_vet; k++)
         {
-            if ( set[i].No[j].SepalAndPetal[k] > mean[k]) set[i].No[j].feature.F_vet[k] = true;
-            else set[i].No[j].feature.F_vet[k] = false;
+            if ( set[i].No[j].SepalAndPetal[k] > mean[k]) set[i].No[j].feature.pop_F[k] = true;
+            else set[i].No[j].feature.pop_F[k] = false;
         }
-        // printf("group => %i - block = %i \t- %0.2lf | %0.2lf | %0.2lf | %0.2lf | %s\t => %i | %0.2lf | %0.2lf\t|\t %d %d %d %d\n", i, (j == index), set[i].No[j].SepalAndPetal[0], set[i].No[j].SepalAndPetal[1], set[i].No[j].SepalAndPetal[2], set[i].No[j].SepalAndPetal[3], set[i].No[j].Class, set[i].No[j].index, set[i].No[j].feature.SepalArea,  set[i].No[j].feature.PetalArea, set[i].No[j].feature.F_vet[0], set[i].No[j].feature.F_vet[1], set[i].No[j].feature.F_vet[2], set[i].No[j].feature.F_vet[3] );
+        // printf("group => %i - block = %i \t- %0.2lf | %0.2lf | %0.2lf | %0.2lf | %s\t => %i | %0.2lf | %0.2lf\t|\t %d %d %d %d\n", i, (j == index), set[i].No[j].SepalAndPetal[0], set[i].No[j].SepalAndPetal[1], set[i].No[j].SepalAndPetal[2], set[i].No[j].SepalAndPetal[3], set[i].No[j].Class, set[i].No[j].index, set[i].No[j].feature.SepalArea,  set[i].No[j].feature.PetalArea, set[i].No[j].feature.pop_F[0], set[i].No[j].feature.pop_F[1], set[i].No[j].feature.pop_F[2], set[i].No[j].feature.pop_F[3] );
     }
 }
 
