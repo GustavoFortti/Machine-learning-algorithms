@@ -58,6 +58,8 @@ int a = 0, e = 0;
 int SE = 0, VIR = 0, VER = 0;
 int score = 0;
 
+int a2 = 0, e2 = 0;
+
 int main(int argc, char const *argv[])
 {
     SubSet set[size_pop / size_ind];
@@ -75,26 +77,27 @@ int main(int argc, char const *argv[])
 
     int i, index, k, j;
     int aux = 0;
-    // for ( i = 0; i < size_group; i++)
-    // {
-    //     for ( index = 0; index < size_ind; index++)
-    //     {
-    //         aux = a;
-    //         CrossValidation(set, i, index);
-    //         if ( aux != a)
-    //         {
-    //             score++;
-    //         }
-    //     }
-    //     // printf("score = %i %i\n", score, i);
-    //     score = 0;
-    // }
+    for ( i = 0; i < size_group; i++)
+    {
+        for ( index = 0; index < size_ind; index++)
+        {
+            aux = a;
+            CrossValidation(set, i, index);
+            if ( aux != a)
+            {
+                score++;
+            }
+        }
+        // printf("score = %i %i\n", score, i);
+        score = 0;
+    }
 
-    i = rand() % 24;
-    index = rand() % 5;
-    CrossValidation(set, i, index);
+    // i = rand() % 24;
+    // index = rand() % 5;
+    // CrossValidation(set, i, index);
     
-    printf("Acertos = %i\nErros = %i\n", a, e);
+    // printf("Acertos = %i\nErros = %i\n", a, e);
+    printf("Acertos 2 = %i\nErros 2 = %i\n", a2, e2);
 
     // printf("Setosa %i - Versicolor %i - Virginica %i \n", SE, VER, VIR);
     return 0;
@@ -136,7 +139,7 @@ void CrossValidation(SubSet set[], int i, int index)
     int CROSS[size_plant][size_vet] = {0};
     int x[size_plant][size_vet] = {0}, y[size_vet][size_vet] = {0};
     int size_MV2 = size_vet;
-
+    // printf("%i \n", block_index);
     for ( index = 0; index < size_plant; index++)
     {
         for ( j = 0; j < size_vet; j++)
@@ -153,101 +156,151 @@ void CrossValidation(SubSet set[], int i, int index)
         SelectionSort_mat_v( IG_sort, CROSS, size_MV2, index, x, y);
     }
 
-    for ( j = 0; j < size_plant; j++)
-    {
-        printf("Group -> %i \t|", i);
-        for ( k = 0; k < size_vet; k++)
-        {
-            printf("%lf ", IG_sort[j][k]);
-        }
-        for ( k = 0; k < size_vet; k++)
-        {
-            printf(" x = %i y = %i -> %i | ", x[j][k], y[j][k], CROSS[j][k]);
-        }
+    // for ( j = 0; j < size_plant; j++)
+    // {
+    //     printf("Group -> %i \t|", i);
+    //     for ( k = 0; k < size_vet; k++)
+    //     {
+    //         printf("%lf ", IG_sort[j][k]);
+    //     }
+    //     for ( k = 0; k < size_vet; k++)
+    //     {
+    //         printf(" x = %i y = %i -> %i = ", x[j][k], y[j][k], CROSS[j][k]);
+    //         printf("%i |", set[i].No[block_index].feature.cross[y[j][k]]);
+    //     }
         
-        printf("\n");
+    //     printf("\n");
+    // }
+
+    double percent[size_plant] = {0};
+    int sum[size_plant] = {0};
+    double val = 0;
+    for ( j = 0; j < size_plant; j++)  //modificar para tornar aleatorio, E UTILIZAR MAIS DE UM IG!!!
+    {
+        for ( k = 0; k < size_vet; k++)
+        {
+            if ( CROSS[j][k] == set[i].No[block_index].feature.cross[y[j][k]])
+            {
+                                // j = index
+                // double val = IG_sort[j][k] * (100 / size_vet);
+                percent[j] = percent[j] + IG_sort[j][k];
+                sum[j]++;
+            }
+        }
     }
 
+    double MAX = percent[0];
+    int R = 0;
+    printf("%s \n", set[i].No[block_index].Class);
+
+    for ( j = 0; j < size_plant - 1; j++)
+    {
+        // printf("%lf \n", percent[j]);
+        if ( percent[j + 1] > MAX )
+        {
+            R = j + 1;
+            MAX = percent[j + 1];
+        }
+    }
+    // printf("%i \n", strcmp(set[i].No[block_index].Class, set[i].No[R2].Class));
+    for ( j = 0; j < size_plant; j++)
+    {
+        printf("%lf %i\n", percent[j], sum[j]);
+    }
+    // printf("%s = %s \n", set[i].No[block_index].Class, set[i].No[R2].Class);
+    
+    if ( strcmp(set[i].No[block_index].Class, set[i].No[R].Class) ==  0)
+    {
+        printf("AC\n\n");
+        a2++;
+    }
+    else
+    {
+        printf("ER %s\n\n", set[i].No[R].Class);
+        e2++;
+    }
+    
+    
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                                             //  HERE
 
-    for ( index = 0; index < size_plant; index++)
-    {
-        for ( j = 0; j < size_plant; j++)
-        {
-            if ( j == 0)
-            {
-                maior[index] = set[i].IG[index].IG_vet[j];
-                plant[index] = index;
-                features_chosen[index] = j;
-                set[i].IG_bool[index] = set[i].No[index].feature.cross[j];
-            }
-            if ( set[i].IG[index].IG_vet[j] > maior[index])
-            {
-                maior[index] = set[i].IG[index].IG_vet[j];
-                plant[index] = index;
-                features_chosen[index] = j;
-                set[i].IG_bool[index] = set[i].No[index].feature.cross[j];
-            }
-        }
-    }
+    // for ( index = 0; index < size_plant; index++)
+    // {
+    //     for ( j = 0; j < size_plant; j++)
+    //     {
+    //         if ( j == 0)
+    //         {
+    //             maior[index] = set[i].IG[index].IG_vet[j];
+    //             plant[index] = index;
+    //             features_chosen[index] = j;
+    //             set[i].IG_bool[index] = set[i].No[index].feature.cross[j];
+    //         }
+    //         if ( set[i].IG[index].IG_vet[j] > maior[index])
+    //         {
+    //             maior[index] = set[i].IG[index].IG_vet[j];
+    //             plant[index] = index;
+    //             features_chosen[index] = j;
+    //             set[i].IG_bool[index] = set[i].No[index].feature.cross[j];
+    //         }
+    //     }
+    // }
     
-    SelectionSort( set, maior, i, plant, features_chosen, size);
+    // SelectionSort( set, maior, i, plant, features_chosen, size);
+    // // for ( j = 0; j < size_plant; j++)
+    // // {
+    // //     printf("Group -> %i \t| %lf -> %i | index -> %i | features chosen -> %i | ", i, maior[j], set[i].IG_bool[j], plant[j], features_chosen[j]);
+    // //     for ( k = 0; k < size_vet; k++)
+    // //     {
+    // //         printf("%i ", set[i].No[j].feature.cross[k]);
+    // //     }
+    // //     printf("\n");
+    // // }
+
+    // // ANALISE
+    // for ( j = 0; j < size_vet; j++)
+    // {
+    //     cross_resp[j] = set[i].No[block_index].feature.cross[j];
+    // }
+    // // RESPOSTA
+    // index_resp = set[i].No[block_index].index;
+    // strcpy(str_resp, set[i].No[block_index].Class);
+
+    // int resp = -1;
+    // // numero aleatorio 0 a 24 -> grupo 0 - numero aleatorio 0 a 5 -> 0
+
     // for ( j = 0; j < size_plant; j++)
     // {
-    //     printf("Group -> %i \t| %lf -> %i | index -> %i | features chosen -> %i | ", i, maior[j], set[i].IG_bool[j], plant[j], features_chosen[j]);
-    //     for ( k = 0; k < size_vet; k++)
+    //     // printf(" %i  %i\n", set[i].No[block_index].feature.cross[features_chosen[j]], set[i].IG_bool[j]);
+    //     if ( set[i].No[block_index].feature.cross[features_chosen[j]] == set[i].IG_bool[j])
     //     {
-    //         printf("%i ", set[i].No[j].feature.cross[k]);
+    //         // printf("%i \n", plant[j]);
+    //         resp = plant[j];
+    //         break;
     //     }
-    //     printf("\n");
     // }
+    // if ( resp == -1) resp = plant[size_plant - 1];
+    // if ( resp == index_resp) a++;
+    // else e++;
 
-    // ANALISE
-    for ( j = 0; j < size_vet; j++)
-    {
-        cross_resp[j] = set[i].No[block_index].feature.cross[j];
-    }
-    // RESPOSTA
-    index_resp = set[i].No[block_index].index;
-    strcpy(str_resp, set[i].No[block_index].Class);
+    // // if ( resp == index_resp) a++, printf("G-%i | Acerto \t->", i);
+    // // else e++, printf("G-%i | Erro \t->", i);
 
-    int resp = -1;
-    // numero aleatorio 0 a 24 -> grupo 0 - numero aleatorio 0 a 5 -> 0
-
-    for ( j = 0; j < size_plant; j++)
-    {
-        // printf(" %i  %i\n", set[i].No[block_index].feature.cross[features_chosen[j]], set[i].IG_bool[j]);
-        if ( set[i].No[block_index].feature.cross[features_chosen[j]] == set[i].IG_bool[j])
-        {
-            // printf("%i \n", plant[j]);
-            resp = plant[j];
-            break;
-        }
-    }
-    if ( resp == -1) resp = plant[size_plant - 1];
-    if ( resp == index_resp) a++;
-    else e++;
-
-    // if ( resp == index_resp) a++, printf("G-%i | Acerto \t->", i);
-    // else e++, printf("G-%i | Erro \t->", i);
-
-    // if ( resp == 0)
-    // {
-    //     printf("R. = Iris-setosa\t- R. esperada = %s\n", str_resp);
-    //     SE++;
-    // }
-    // if ( resp == 1)
-    // {
-    //     printf("R. = Iris-versicolor\t- R. esperada = %s\n", str_resp);
-    //     VER++;
-    // }
-    // if ( resp == 2)
-    // {
-    //     printf("R. = Iris-virginica\t- R. esperada = %s\n", str_resp);
-    //     VIR++;
-    // }
+    // // if ( resp == 0)
+    // // {
+    // //     printf("R. = Iris-setosa\t- R. esperada = %s\n", str_resp);
+    // //     SE++;
+    // // }
+    // // if ( resp == 1)
+    // // {
+    // //     printf("R. = Iris-versicolor\t- R. esperada = %s\n", str_resp);
+    // //     VER++;
+    // // }
+    // // if ( resp == 2)
+    // // {
+    // //     printf("R. = Iris-virginica\t- R. esperada = %s\n", str_resp);
+    // //     VIR++;
+    // // }
 
 }
 
@@ -285,36 +338,36 @@ void swap_mat_v(double v[][size_vet], int CROSS[][size_vet], int size, int index
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void SelectionSort(SubSet set[], double v[], int aux, int plant[], int features_chosen[], int size)
-{
-	int i = 0, j = 0;
-    for ( i = 0; i < size - 1; i++){
-        for ( j = i + 1; j < size; j++){
-            if ( v[i] < v[j]){
-                swap(set, v, aux, plant, features_chosen, i, j);
-            }
-        }
-    }
-}
+// void SelectionSort(SubSet set[], double v[], int aux, int plant[], int features_chosen[], int size)
+// {
+// 	int i = 0, j = 0;
+//     for ( i = 0; i < size - 1; i++){
+//         for ( j = i + 1; j < size; j++){
+//             if ( v[i] < v[j]){
+//                 swap(set, v, aux, plant, features_chosen, i, j);
+//             }
+//         }
+//     }
+// }
 
-void swap(SubSet set[], double v[], int aux, int plant[], int features_chosen[], int i, int j)
-{
-    double aux_v = v[i];
-    v[i] = v[j];
-    v[j] = aux_v;
+// void swap(SubSet set[], double v[], int aux, int plant[], int features_chosen[], int i, int j)
+// {
+//     double aux_v = v[i];
+//     v[i] = v[j];
+//     v[j] = aux_v;
 
-    bool aux_set = set[aux].IG_bool[i];
-    set[aux].IG_bool[i] = set[aux].IG_bool[j];
-    set[aux].IG_bool[j] = aux_set;
+//     bool aux_set = set[aux].IG_bool[i];
+//     set[aux].IG_bool[i] = set[aux].IG_bool[j];
+//     set[aux].IG_bool[j] = aux_set;
 
-    int aux_plant = plant[i];
-    plant[i] = plant[j];
-    plant[j] = aux_plant;
+//     int aux_plant = plant[i];
+//     plant[i] = plant[j];
+//     plant[j] = aux_plant;
 
-    int aux_features_chosen = features_chosen[i];
-    features_chosen[i] = features_chosen[j];
-    features_chosen[j] = aux_features_chosen;
-}
+//     int aux_features_chosen = features_chosen[i];
+//     features_chosen[i] = features_chosen[j];
+//     features_chosen[j] = aux_features_chosen;
+// }
 
 void CalcIG(SubSet set[], int i, int index, int block_index)
 {
