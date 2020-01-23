@@ -5,24 +5,6 @@
 #include <math.h>
 #include "DecisionTree.h"
 
-/*
-    CROSS VALIDATION 
-
-        MODIFICAÇÕES NECESSARIAS: utilizar sistema de score 
-        baseado em probabilidade para aumentar a chance de 
-        acertos sobre os dados.
-        Ao inves de puxar apenas uma informação do IG que 
-        seria apenas o maior, utilizar tambem as outras 
-        para aumentar a margem de acertos...
-        apos a utilização desse metodo, ai sim utilizar os 
-        algoritimos geneticos!!
-
-    ALGORITIMOS GENETICOS 
-
-        ...
-
-*/
-
 struct features
 {
     double SepalArea;
@@ -54,7 +36,7 @@ struct subset
     bool IG_bool[size_plant];
 };
 
-int a2 = 0, e2 = 0;
+int C = 0, E = 0;
 
 int main(int argc, char const *argv[])
 {
@@ -66,37 +48,36 @@ int main(int argc, char const *argv[])
         # Iris-setosa
         sample1 = [1.0, 2.0, 3.5, 1.0, 10.0, 3.5, False, False, False, False]
         # Iris-versicolor
-        sample2 = [5.0, 3.5, 1.3, 0.2, 17.8, 0.2, False, True, False, False]
+        samplE = [5.0, 3.5, 1.3, 0.2, 17.8, 0.2, False, True, False, False]
         # Iris-virginica
         sample3 = [7.9, 5.0, 2.0, 1.8, 19.7, 9.1, True, False, True, True]
     */
 
     int i, index, k, j;
     int aux = 0;
-    // for ( i = 0; i < size_group; i++)
-    // {
-    //     for ( index = 0; index < size_ind; index++)
-    //     {
-    //         CrossValidation(set, i, index);
-    //     }
-    // }
+    for ( i = 0; i < size_group; i++)
+    {
+        for ( index = 0; index < size_ind; index++)
+        {
+            CrossValidation(set, i, index);
+        }
+    }
 
     // i = rand() % 24;
     // index = rand() % 5;
 
-    i = 24;
-    index = 5;
-    for ( index = 0; index < 6; index++)
-    {
-        printf("\t\t  --ENTRADA %i -- \n\n", index);
-        CrossValidation(set, i, index);
-        printf("\n\n");
-    }
+    // i = 24;
+    // index = 5;
+    // for ( index = 0; index < 6; index++)
+    // {
+    //     printf("\t\t  --ENTRADA %i -- \n\n", index);
+    //     CrossValidation(set, i, index);
+    //     printf("\n\n");
+    // }
     
     
-    // printf("Acertos 2 = %i\nErros 2 = %i\n", a2, e2);
-
-    // printf("Setosa %i - Versicolor %i - Virginica %i \n", SE, VER, VIR);
+    printf("Corrects = %i\nError = %i\n", C, E);
+    printf("%i percent correct\n", (C * 100) / size_pop);
     return 0;
 }
 
@@ -188,13 +169,13 @@ void CrossValidation(SubSet set[], int i, int index)
     
     if ( strcmp(set[i].No[block_index].Class, set[i].No[R].Class) ==  0)
     {
-        // printf("AC\n\n");
-        a2++;
+        printf("\n");
+        C++;
     }
     else
     {
-        printf("ERRO  -> \t\t%s\n\n", set[i].No[R].Class);
-        e2++;
+        printf("Resposta correta  -> \t%s\n\n", set[i].No[R].Class);
+        E++;
     }
 
 }
@@ -302,7 +283,7 @@ void CalcFeatures(SubSet set[], int i, int index)
             if ( set[i].No[j].SepalAndPetal[k] > mean[k]) set[i].No[j].feature.cross[k] = true;
             else set[i].No[j].feature.cross[k] = false;
         }
-        printf("group => %i - block = %i \t- %0.2lf | %0.2lf | %0.2lf | %0.2lf | %s\t => %i | %0.2lf | %0.2lf\t|\t %d %d %d %d\n", i, (j == index), set[i].No[j].SepalAndPetal[0], set[i].No[j].SepalAndPetal[1], set[i].No[j].SepalAndPetal[2], set[i].No[j].SepalAndPetal[3], set[i].No[j].Class, set[i].No[j].index, set[i].No[j].feature.SepalArea,  set[i].No[j].feature.PetalArea, set[i].No[j].feature.cross[0], set[i].No[j].feature.cross[1], set[i].No[j].feature.cross[2], set[i].No[j].feature.cross[3] );
+        printf("group => %i - test plant = %i \t- %0.2lf | %0.2lf | %0.2lf | %0.2lf | %s\t => %i | %0.2lf | %0.2lf\t|\t %d %d %d %d\n", i, (j == index), set[i].No[j].SepalAndPetal[0], set[i].No[j].SepalAndPetal[1], set[i].No[j].SepalAndPetal[2], set[i].No[j].SepalAndPetal[3], set[i].No[j].Class, set[i].No[j].index, set[i].No[j].feature.SepalArea,  set[i].No[j].feature.PetalArea, set[i].No[j].feature.cross[0], set[i].No[j].feature.cross[1], set[i].No[j].feature.cross[2], set[i].No[j].feature.cross[3] );
     }
 }
 
