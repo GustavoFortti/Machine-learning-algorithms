@@ -53,8 +53,9 @@ int main()
         int index_best = getBest(pop);
         int best_score = getScore(index_best, pop);
         printf("------------------\nGeneration - %i\n", i + 1);
-        printf("Index = %i\nBest score = %i \n\n",index_best ,best_score);
-
+        printf("Index = %i\tBest score = %i\n",index_best ,best_score);
+        viewerPop(index_best , pop);
+        printf("\n\n");
         if ( best_score == size_gen)
         {
             break;
@@ -76,19 +77,15 @@ void startPop( int pop[][size_gen])
     }
 }
 
-void viewerPop( int pop[][size_gen])
+void viewerPop( int i, int pop[][size_gen])
 {
-    int i, j, score;
-    for ( i = 0; i < size_pop; i++)
+    int j, score;
+
+    for ( j = 0; j < size_gen; j++)
     {
-        for ( j = 0; j < size_gen; j++)
-        {
-            printf("%i ", pop[i][j]);
-        }
-        score = getScore(i, pop);
-        printf("Score = %i", score);
-        printf("\n");
+        printf("%i ", pop[i][j]);
     }
+
 }
 
 int getScore( int individuo, int pop[][size_gen])
