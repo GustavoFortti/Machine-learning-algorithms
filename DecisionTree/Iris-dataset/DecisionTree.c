@@ -91,7 +91,6 @@ int main(int argc, char const *argv[])
         printf("\t\t  --ENTRADA %i -- \n\n", index);
         CrossValidation(set, i, index);
         printf("\n\n");
-        /* code */
     }
     
     
@@ -132,11 +131,6 @@ void CrossValidation(SubSet set[], int i, int index)
             y[index][j] = j;
             x[index][j] = index;
         }
-    }
-
-    for ( index = 0; index < size_plant; index++)
-    {
-        // SelectionSort( IG_sort, CROSS, size, index, x, y);
     }
 
     for ( j = 0; j < size_plant; j++)
@@ -205,39 +199,6 @@ void CrossValidation(SubSet set[], int i, int index)
 
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-// void SelectionSort(double v[][size_vet], int CROSS[][size_vet], int size, int index, int x[][size_vet], int y[][size_vet])
-// {
-// 	int i = 0, j = 0;
-//     for ( i = 0; i < size - 1; i++){
-//         for ( j = i + 1; j < size; j++){
-//             if ( v[index][i] < v[index][j]){
-//                 swap( v, CROSS, size, index, x, y, i, j);
-//             }
-//         }
-//     }
-// }
-
-// void swap(double v[][size_vet], int CROSS[][size_vet], int size, int index, int x[][size_vet], int y[][size_vet], int i, int j)
-// {
-//     double aux_v = v[index][i];
-//     v[index][i] = v[index][j];
-//     v[index][j] = aux_v;
-
-//     int aux_c = CROSS[index][i];
-//     CROSS[index][i] = CROSS[index][j];
-//     CROSS[index][j] = aux_c;
-
-//     int aux_x = x[index][i];
-//     x[index][i] = x[index][j];
-//     x[index][j] = aux_x;
-
-//     int aux_y = y[index][i];
-//     y[index][i] = y[index][j];
-//     y[index][j] = aux_y;
-// }
-
 void CalcIG(SubSet set[], int i, int index, int block_index)
 {
     int j, k;
@@ -267,7 +228,6 @@ void CalcIG(SubSet set[], int i, int index, int block_index)
     //     printf("%d ", set[i].No[index].feature.cross[j]);
     // }
     // printf("   ");
-
 
     int size_ind_aux = size_ind - 1;
 
