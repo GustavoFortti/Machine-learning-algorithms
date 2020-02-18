@@ -39,49 +39,117 @@ int main()
 {
     Pop *p;
     p = input();
-
     int i = 0, j, k;
-    // for ( i = 0; i < size_group; i++)
-    // {
-    //     for ( j = 0; j < size_ind; j++)
-    //     {
-    //         printf("%i", p->gr[i].pl[j].index);
-    //     }
-    // }
 
     for ( i = 0; i < size_group; i++)
     {
         CrossValidation(p, i);
     }
 
-    printf("______________\n");
-    for ( i = 0; i < 5; i++)
+    // for ( i = 0; i < 5; i++)
+    // {
+    //     for ( j = 0; j < 3; j++)
+    //     {
+    //         for ( k = 0; k < 4; k++)
+    //         {
+    //             printf("%0.3lf \t", p->gr[i].ig[j].IG_vet[k]);
+    //         }
+    //         for ( k = 0; k < 4; k++)
+    //         {
+    //             printf(" %i ",  p->gr[i].ig[j].ig_bool[k]);
+    //         }
+    //         printf("\n");
+    //     }
+    //     printf("\n\n");
+    // }
+    for ( i = 0; i < size_group; i++)
     {
-        for ( j = 0; j < 3; j++)
-        {
-            for ( k = 0; k < 4; k++)
-            {
-                /* code */
-                printf("%0.3lf \t", p->gr[i].ig[j].IG_vet[k]);
-            }
-            for ( k = 0; k < 4; k++)
-            {
-                /* code */
-                printf(" %i ",  p->gr[i].ig[j].ig_bool[k]);
-            }
-            printf("\n");
-        }
+        D3(p, i);
         printf("\n\n");
     }
-
+    
 
 }
 
-// void D3(Pop *p)
-// {
+void D3(Pop *p, int i)
+{
+    int j, k, l;
+    double ig[size_plant] = {0};
+    int index[size_plant] = {0};
+    for ( j = 0; j < size_plant; j++)
+    {
+        index[j] = j;
+    }
     
+    for ( j = 0; j < size_plant; j++)
+    {
+        for ( k = 0; k < size_vet; k++)
+        {
+            ig[j] = ig[j] + p->gr[i].ig[j].IG_vet[k];
+        }
+    }
 
-// }
+    int size = size_plant;
+    SelectionSort(ig, size, index);
+
+
+    for ( j = 0; j < 3; j++)
+    {
+        for ( k = 0; k < 4; k++)
+        {
+            printf("%0.3lf \t", p->gr[i].ig[j].IG_vet[k]);
+        }
+        for ( k = 0; k < 4; k++)
+        {
+            printf(" %i ",  p->gr[i].ig[j].ig_bool[k]);
+        }
+        printf("  %i %lf", index[j], ig[j]);
+        printf("\n");
+    }
+    
+    // for ( j = 0; j < size_ind; j++)
+    // {
+        for ( k = 0; k < size_plant; k++)
+        {
+            for ( l = 0; l < size_vet; l++)
+            {
+                if ( p->gr[i].pl[j].cross_mean[k] == p->gr[i].ig[index[j]].ig_bool[k])
+                {
+                    // ig[k] = ig[k] + p->gr[i].ig[index[k]].IG_vet[l];
+                }
+                printf("%lf %i ", p->gr[i].ig[index[k]].IG_vet[l], p->gr[i].pl[index[k]].cross_mean[k]);
+            }
+            printf("\n");
+        }
+
+
+    // }
+    
+}
+
+void SelectionSort( double v[], int size, int index[])
+{
+	long i=0, j=0;
+    for ( i = 0; i < size-1; i++){
+        for ( j = i; j < size; j++){
+            if ( v[i] < v[j]){
+                swap( v, i, j, index);
+            }
+        }
+    }
+}
+
+void swap( double v[], int i, int j, int index[])
+{
+    double aux = v[i];
+    v[i] = v[j];
+    v[j] = aux;
+
+    int aux2 = index[i];
+    index[i] = index[j];
+    index[j] = aux2;
+}
+
 
 void CrossValidation(Pop *p, int group_block)
 {

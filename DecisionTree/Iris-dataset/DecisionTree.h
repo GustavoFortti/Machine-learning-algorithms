@@ -12,6 +12,10 @@ typedef struct group Group;
 typedef struct pop Pop;
 typedef struct InformationGain IG;
 
+
+void D3(Pop *p, int i);
+void SelectionSort( double v[], int size, int index[]);
+void swap(  double v[], int i, int j, int index[]);
 void CalcIG(Pop *p, int plant, int group_block);
 void CrossValidation(Pop *p, int group_block);
 void CalcFeatures(Pop *p, int group_block);
