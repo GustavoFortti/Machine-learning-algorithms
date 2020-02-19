@@ -34,7 +34,7 @@ struct pop
     Group gr[size_group];      
 };
 
-
+int a = 0, e = 0;
 int main()
 {
     Pop *p;
@@ -67,7 +67,7 @@ int main()
         D3(p, i);
         printf("\n\n");
     }
-    
+    // printf("\n%i %i\n", a, e);
 
 }
 
@@ -92,39 +92,69 @@ void D3(Pop *p, int i)
     int size = size_plant;
     SelectionSort(ig, size, index);
 
-
+    bool ig_cross[size_plant][size_vet];
     for ( j = 0; j < 3; j++)
     {
         for ( k = 0; k < 4; k++)
         {
-            printf("%0.3lf \t", p->gr[i].ig[j].IG_vet[k]);
+            printf("%0.3lf \t", p->gr[i].ig[index[j]].IG_vet[k]);
         }
         for ( k = 0; k < 4; k++)
         {
-            printf(" %i ",  p->gr[i].ig[j].ig_bool[k]);
+            printf(" %i ",  p->gr[i].ig[index[j]].ig_bool[k]);
+            ig_cross[j][k] = p->gr[i].ig[index[j]].ig_bool[k];
         }
         printf("  %i %lf", index[j], ig[j]);
         printf("\n");
     }
-    
-    // for ( j = 0; j < size_ind; j++)
-    // {
+
+    double aux[size_plant] = {0};
+
+    for ( j = 0; j < size_ind; j++)
+    {
         for ( k = 0; k < size_plant; k++)
         {
             for ( l = 0; l < size_vet; l++)
             {
-                if ( p->gr[i].pl[j].cross_mean[k] == p->gr[i].ig[index[j]].ig_bool[k])
+                if ( p->gr[i].pl[j].cross_mean[l] == ig_cross[k][l])
                 {
-                    // ig[k] = ig[k] + p->gr[i].ig[index[k]].IG_vet[l];
+                    aux[k] = aux[k] + p->gr[i].ig[index[k]].IG_vet[l];
+                    printf(" %i",  p->gr[i].pl[j].cross_mean[l]);
                 }
-                printf("%lf %i ", p->gr[i].ig[index[k]].IG_vet[l], p->gr[i].pl[index[k]].cross_mean[k]);
+                else
+                {
+                    printf(" x");
+                }
+            }
+
+            printf("\t");
+            printf("ig = %lf \t", aux[k]);
+            for ( l = 0; l < size_vet; l++)
+            {
+                printf(" %i",  p->gr[i].pl[j].cross_mean[l]);
             }
             printf("\n");
         }
+        double maior = -1;
+        int iris = 0;
+        for ( k = 0; k < size_plant; k++)
+        {
+            if ( aux[k] > maior)
+            {
+                maior = aux[k];
+                iris = index[k];
+            }
+        }
+        printf("\t\t\t%i %i \n\n", iris, p->gr[i].pl[j].index);
+        if ( iris ==  p->gr[i].pl[j].index) a++;
+        else e++;
 
-
-    // }
-    
+        for ( k = 0; k < size_plant; k++)
+        {
+            aux[k] = 0;
+        }
+    }
+    printf("\n%i %i\n", a, e);
 }
 
 void SelectionSort( double v[], int size, int index[])
