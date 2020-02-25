@@ -4,8 +4,8 @@
 
 #define size_pop       10
 #define size_gen       10
-#define generation     10
-#define tournament     10
+#define generation     1000
+#define tournament     100
 #define prob_mutation  0.1
 #define prob_cross     0.7
 #define value          20   // x da expreção
@@ -34,24 +34,24 @@ int main()
     p = startPop();
     viewerPop(p);
 
-    printf("\n");
 
     for (int i = 0; i < generation; i++)
     {
+        printf("\n\tGeneration = %i\n", i + 1);
         int index_best = getBest(p);
         double array_best[size_gen];
         conversion_StrctForVector(p, array_best, index_best);
         double score_best = getScore(array_best);
         double x = 0;
         // printf("\t");
-        viewerPop(p);
+        // viewerPop(p);
         for (int i = 0; i < size_gen; i++)
         {
             // if ( array_best[i] > 0) printf("\t %.1lf ", array_best[i]);
             // else printf("\t%.1lf ", array_best[i]);
             x = x + array_best[i];
         }
-        printf("\n\t\tx = %.1lf  score = %.1lf\n", x, score_best);
+        printf("\n\tx = %.1lf  score = %lf\n", x, score_best);
         if ( score_best == value)
         {
             printf(" win %i\n", i);
@@ -71,38 +71,41 @@ int main()
                 {
                     index_xx = rand() % size_gen;
                     index_xy = rand() % size_gen;
-                    printf("%i %i %i\n", index_xy == index_xx ,index_xy == elitism,index_xx == elitism);
-                    // printf("%i ", index_xx == index_xy);
-                } while ( index_xy == index_xx || index_xy == elitism || index_xx == elitism); // ou excluusivo?
+                } while ( index_xy == index_xx || index_xy == elitism || index_xx == elitism);
 
-                printf("->> %i %i %i\n", index_xx, index_xy, elitism);
-                // printf("\n");
-                
                 double son[size_gen] = {0};
                 cross(p, index_xx, index_xy, son);
 
                 double prob = (double)rand() / ((double)RAND_MAX + 1);
                 if ( prob < prob_mutation) mutation(son);
                 
+
                 double v_xx[size_gen], v_xy[size_gen];
                 conversion_StrctForVector(p, v_xx, index_xx);
                 conversion_StrctForVector(p, v_xy, index_xy);
+
+                // for (int k = 0; k < size_gen; k++)
+                // {
+                //     printf("%0.1lf ", v_xy[k]);
+                // }
+                // printf("\n");
 
                 double score_xx = getScore(v_xx);
                 double score_xy = getScore(v_xy);
                 double score_son = getScore(son);
 
-                score_xx = howClose(score_xx);
-                score_xy = howClose(score_xy);
-                score_son = howClose(score_son);
+                // printf("%lf  %lf  %lf\n", score_xx , score_xy  , score_son);
+                double nears_xx = howClose(score_xx);
+                double nears_xy = howClose(score_xy);
+                double nears_son = howClose(score_son);
 
-                // if ( score_xx > score_xy && score_son < score_xx) Dominant(p, son, index_xx);
-                // else if ( score_xy > score_xx && score_son < score_xy) Dominant(p, son, index_xy);
+                // printf("%lf  %lf  %lf\n", nears_xx , nears_xy  , nears_son);
 
-                // for (int k = 0; k < size_gen; k++)
-                // {
+                // printf("%i\n", nears_xx < nears_xy && score_xx < nears_son);
+                // printf("%i\n", nears_xy < nears_xx && nears_xy < nears_son);
 
-                // }
+                if ( nears_xx > nears_xy && score_xx > nears_son) Dominant(p, son, index_xx);
+                else if ( nears_xy > nears_xx && nears_xy > nears_son) Dominant(p, son, index_xy);
             }
         }
     }
@@ -218,6 +221,8 @@ double howClose(double neares)
         if (neares < 0) neares = value - (neares * (-1));
         else neares = value - neares;
     }
+    if ( neares < 0) neares = neares * (-1);
+    
     return neares;
 }
 
