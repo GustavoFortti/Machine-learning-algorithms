@@ -5,7 +5,6 @@ int main()
     srand(time(NULL));
     Pop *p;
     p = startPop();
-    // viewerPop(p);
 
     for (int i = 0; i < generation; i++)
     {
@@ -27,7 +26,7 @@ int main()
             printf("Solucao otima: %lf\n", x);
             break;
         }
-        viewerPop(p); 
+        // viewerPop(p); 
         int elitism = rand() % size_gen;
         for (int j = 0; j < tournament; j++)
         {

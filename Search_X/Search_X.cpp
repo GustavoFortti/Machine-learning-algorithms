@@ -37,7 +37,6 @@ void inserctionSort( double v[], int size, int index[])
 
 int selectionByRating(Pop *p, int index)
 {
-    // printf("\n\n");
     double score_pop[size_pop], nears_pop[size_pop], pop[size_pop];
     int index_pop[size_gen];
     for (int i = 0; i < size_pop; i++)
@@ -47,16 +46,10 @@ int selectionByRating(Pop *p, int index)
         double aux = score_pop[i];
         nears_pop[i] = howClose(aux);
         index_pop[i] = i;
-        // printf("\t%.1lf\t %.1lf\t %i \n", score_pop[i], nears_pop[i], i);
     }
-    // printf("\n");
     int size = size_pop;
     inserctionSort(nears_pop, size, index_pop);
-    // for (int i = 0; i < size_pop; i++)
-    // {
-    //     printf("\t%.1lf\t %.1lf\t %i \n", score_pop[index_pop[i]], nears_pop[i], index_pop[i]);
-    // }
-    
+
     int range;
     int weight[size_pop + 1] = {0};
     weight[0] = 1;
@@ -64,23 +57,14 @@ int selectionByRating(Pop *p, int index)
     {
         weight[i] = weight[i - 1] + (i + 1);
     }
-    range = weight[size_pop];
 
-    // int choice = (rand() % range) + 1;
-    // int choice = (rand() % weight[size_pop - 1]) + 1;
+    range = weight[size_pop];
     int choice = (rand() % range) + 1;
-    // printf("range = %i\n", range);
-    // for (int i = 0; i < size_pop + 1; i++)
-    // {
-    //     printf("%lf %i %i\n", nears_pop[i], index_pop[i], weight[i]);
-    // }
-    // printf("%i\n", choice);
     for (int i = 0; i < size_pop; i++)
     {
         if ( choice >= weight[i] && choice < weight[i + 1])
         {
             index = index_pop[i];
-            // printf("%i %Lf\n", index_pop[i], (i + p)->gen[index_pop[i]]);
             break;
         }
     }
@@ -129,8 +113,8 @@ void mutation(double son[])
     int choice;
 
     choice = rand() % 2;
-    if ( choice == 1) son[gen] = ((rand() % RAND_MAX)); //pos
-    else son[gen] = ((rand() % RAND_MAX) * (-1));       //neg
+    if ( choice == 1) son[gen] = ((rand() % RAND_MAX)); 
+    else son[gen] = ((rand() % RAND_MAX) * (-1));       
     son[gen] = son[gen] / (rand() % RAND_MAX);
 }
 
@@ -163,7 +147,6 @@ void conversion_StrctForVector(Pop *p, double v[], int i)
         v[j] = (i + p)->gen[j];
     }
 }
-
 
 double getScore(double v[])
 {
