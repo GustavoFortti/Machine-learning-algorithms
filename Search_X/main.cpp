@@ -21,12 +21,12 @@ int main()
             x = x + array_best[i];
         }
         printf("\tx = %.1lf  y = %lf\n", x, score_best);
-        if ( score_best >= (double)value && score_best < ((double)value + 0.01))
+        if ( score_best >= (double)value && score_best < ((double)value + 0.0001))
         {
             printf("Solucao otima: %lf\n", x);
             break;
         }
-        // viewerPop(p); 
+        // viewerPop(p);
         int elitism = rand() % size_gen;
         for (int j = 0; j < tournament; j++)
         {

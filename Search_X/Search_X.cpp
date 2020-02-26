@@ -115,7 +115,7 @@ void mutation(double son[])
     choice = rand() % 2;
     if ( choice == 1) son[gen] = ((rand() % RAND_MAX)); 
     else son[gen] = ((rand() % RAND_MAX) * (-1));       
-    son[gen] = son[gen] / (rand() % RAND_MAX);
+    son[gen] /= (rand() % RAND_MAX);
 }
 
 int getBest(Pop *p)

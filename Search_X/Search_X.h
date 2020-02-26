@@ -10,7 +10,7 @@
 #define size_gen       10
 #define generation     10000
 #define tournament     1000
-#define prob_mutation  0.01
+#define prob_mutation  1
 #define prob_cross     0.7
 #define value          20   // x da expreção
 
